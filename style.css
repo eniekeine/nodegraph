@@ -6,8 +6,8 @@ body{
 }
 .frame{
     position: relative;
-    width: 800px;
-    height: 600px;
+    width: 100%;
+    height: 100%;
     background-color: #142118;  
     padding: 0;
     margin: 0;
@@ -17,11 +17,31 @@ body{
     position: absolute;
 }
 .node{
-    width: 36px;
-    height: 36px;
+    width: fit-content;
+    height: fit-content;
+    min-width: 36px;
+    min-height: 36px;
+    display:inline-flex;
+    border: 2px solid transparent  
+}
+.node-content-text {
+    min-width: 32px;
+    min-height: 32px;
     background-color: #1d6e21;
     border-radius: 8px;
-    border: 2px solid #001000;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.node-content-image{
+    min-width: 32px;
+    min-height: 32px;
+    width: 100%;
+    height: 100%;
+    background-color: none;
+    border:none;
+    object-fit: contain;
 }
 .node.selected{
     border: 2px solid #cf7f40    
@@ -52,16 +72,28 @@ body{
 }
 .right-sidebar{
     display: flex;
-    background-color: red;
+    background: hsla(103, 50%, 50%, 1.0);
     min-width: 12em;
     overflow-x:hidden;
     overflow-y:scroll;
 }
 .edge{
-    background-color: #1d6e21;
-    border: 2px solid #ffffff;
+    background-color: none;
+    border-top: 4px solid #ffffff;
     transform-origin: left center;
 }
 .edge.selected{
     border: 2px solid red;
+}
+.edge-custom1{
+    border-top: 4px solid #cf7f40;
+}
+.edge-custom2{
+    border-top: 4px dashed #cf7f40;
+}
+
+.node-data-text{
+    width: 100%;
+    height: 360px;
+    overflow:scroll;
 }

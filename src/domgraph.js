@@ -1,7 +1,8 @@
-import graph from './graph';
+import { getNodeData, getEdgeStyle } from './graphview';
 
 const domNodes = [];
 const domEdges = [];
+let loadedGraph = null;
 let panX = 0;
 let panY = 0;
 let frameWidth = 800;
@@ -12,6 +13,16 @@ let mousemoveToken = null;
 let mousedownToken = null;
 let downItem = null;
 let soundBlipUrl = null;
+let callbackNodeClicked = null;
+let callbackEdgeClicked = null;
+
+function setCallbackNodeClicked(callback) {
+  callbackNodeClicked = callback;
+}
+
+function setCallbackEdgeClicked(callback) {
+  callbackEdgeClicked = callback;
+}
 
 function setSoundBlipUrl(url) { soundBlipUrl = url; }
 
@@ -38,61 +49,102 @@ function getCenterPosition(node) {
   };
 }
 
-function createNode(id, x, y) {
-  const node = document.createElement('div');
-  node.classList.add('node');
-  node.style.left = `${x}px`;
-  node.style.top = `${y}px`;
-  node.id = id;
-  return node;
+function makeDomNodeContent(graph, node) {
+  const nodedata = getNodeData(graph, node.id);
+  // default : display node id
+  if (!nodedata) {
+    const domNodeContent = document.createElement('div');
+    domNodeContent.classList.add('node-content-text');
+    domNodeContent.textContent = node.id;
+    return domNodeContent;
+  }
+  if (nodedata.text) {
+    const domNodeContent = document.createElement('div');
+    domNodeContent.classList.add('node-content-text');
+    domNodeContent.textContent = nodedata.text;
+    return domNodeContent;
+  }
+  if (nodedata.image) {
+    const domNodeContent = document.createElement('img');
+    domNodeContent.classList.add('node-content-image');
+    domNodeContent.src = nodedata.image;
+    return domNodeContent;
+  }
+  if (nodedata.html) {
+    const domNodeContent = document.createElement('div');
+    domNodeContent.innerHTML = nodedata.html;
+    return domNodeContent;
+  }
+  return null;
 }
 
-function makeNodes() {
+function makeDomNode(graph, node) {
+  const {
+    id, x, y, w, h,
+  } = node;
+  const domNode = document.createElement('div');
+  domNode.classList.add('node');
+  domNode.style.left = `${x}px`;
+  domNode.style.top = `${y}px`;
+  if (w) domNode.style.width = `${w}px`;
+  if (h) domNode.style.height = `${h}px`;
+  domNode.id = id;
+  const domNodeContent = makeDomNodeContent(graph, node);
+  if (domNodeContent) domNode.appendChild(domNodeContent);
+  return domNode;
+}
+
+function makeDomNodes(graph) {
   const frame = document.querySelector('.frame');
   for (let i = 0; i < graph.nodes.length; i += 1) {
-    const jsonNode = graph.nodes[i];
-    const node = createNode(jsonNode.id, jsonNode.x, jsonNode.y);
-    domNodes.push(node);
-    frame.appendChild(node);
+    const node = graph.nodes[i];
+    const domNode = makeDomNode(graph, node);
+    domNodes.push(domNode);
+    frame.appendChild(domNode);
   }
 }
 
-function getNodePosition(id) {
-  const node = document.getElementById(id);
+function getNodePosition(nodeid) {
+  const node = document.getElementById(nodeid);
   return getCenterPosition(node);
 }
 
-function makeEdges() {
+function makeDomEdges(graph) {
   for (let i = 0; i < graph.edges.length; i += 1) {
-    const pos0 = getNodePosition(graph.edges[i][0]);
-    const pos1 = getNodePosition(graph.edges[i][1]);
+    const edge = graph.edges[i];
+    const pos0 = getNodePosition(edge.fromto[0]);
+    const pos1 = getNodePosition(edge.fromto[1]);
     const dx = pos1.x - pos0.x;
     const dy = pos1.y - pos0.y;
     const l = dx * dx + dy * dy;
     const alpha = Math.atan2(dy, dx);
-    const div = document.createElement('div');
-    div.classList.add('edge');
-    div.style.left = `${pos0.x}px`;
-    div.style.top = `${pos0.y}px`;
-    div.style.transform = `rotate(${alpha}rad)`;
-    div.style.width = `${Math.sqrt(l)}px`;
-    domEdges.push(div);
+    const domEdge = document.createElement('div');
+    domEdge.classList.add('edge');
+    const edgeStyle = getEdgeStyle(graph, edge.id);
+    if (edgeStyle && edgeStyle.class !== undefined) {
+      domEdge.classList.add(edgeStyle.class);
+    }
+    domEdge.style.left = `${pos0.x}px`;
+    domEdge.style.top = `${pos0.y}px`;
+    domEdge.style.transform = `rotate(${alpha}rad)`;
+    domEdge.style.width = `${Math.sqrt(l)}px`;
+    domEdges.push(domEdge);
     const frame = document.querySelector('.frame');
-    frame.insertBefore(div, frame.firstChild);
+    frame.insertBefore(domEdge, frame.firstChild);
   }
 }
 
 function updateGraph() {
   for (let i = 0; i < domNodes.length; i += 1) {
     const node = domNodes[i];
-    const jsonNode = graph.nodes[i];
+    const jsonNode = loadedGraph.nodes[i];
     node.style.left = `${jsonNode.x + panX}px`;
     node.style.top = `${jsonNode.y + panY}px`;
   }
   for (let i = 0; i < domEdges.length; i += 1) {
     const edge = domEdges[i];
-    const jsonEdge = graph.edges[i];
-    const pos0 = getNodePosition(jsonEdge[0]);
+    const jsonEdge = loadedGraph.edges[i];
+    const pos0 = getNodePosition(jsonEdge.fromto[0]);
     edge.style.left = `${pos0.x}px`;
     edge.style.top = `${pos0.y}px`;
   }
@@ -116,12 +168,22 @@ function playBlip() {
   audio.play();
 }
 
-function initFrame(frame) {
+function initFrame(frame, graph) {
+  loadedGraph = graph;
+  makeDomNodes(graph);
+  makeDomEdges(graph);
+
   mouseupToken = frame.addEventListener('mouseup', (event) => {
-    if (event.target.classList.contains('node')
-    || event.target.classList.contains('edge')) {
+    const node = event.target.closest('.node');
+    const edge = event.target.closest('.edge');
+    if (node) {
       playBlip();
-      selectItem(event.target);
+      selectItem(node);
+      if (callbackNodeClicked) callbackNodeClicked(node);
+    } else if (edge) {
+      playBlip();
+      selectItem(edge);
+      if (callbackEdgeClicked) callbackEdgeClicked(edge);
     }
   });
 
@@ -144,5 +206,12 @@ function freeGraph(frame) {
 }
 
 export {
-  initFrame, freeGraph, makeNodes, makeEdges, updateGraph, updatePan, setFrameSize, setSoundBlipUrl,
+  initFrame,
+  freeGraph,
+  updateGraph,
+  updatePan,
+  setFrameSize,
+  setSoundBlipUrl,
+  setCallbackNodeClicked,
+  setCallbackEdgeClicked,
 };
