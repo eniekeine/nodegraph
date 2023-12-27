@@ -31,7 +31,7 @@ function onSelectionChanged(graph, domItem) {
 
 document.addEventListener('DOMContentLoaded', () => {
   const frame = document.querySelector('.frame');
-  fetch('https://github.com/eniekeine/nodegraph/blob/master/example/basic.json')
+  fetch('https://raw.githubusercontent.com/eniekeine/nodegraph/master/example/basic.json')
     .then((response) => response.json())
     .then((graph) => {
       // initFrame must be called with frame element before any other calls
