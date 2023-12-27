@@ -1,7 +1,13 @@
-(function () {
-  'use strict';
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+  typeof define === 'function' && define.amd ? define(['exports'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.nodegraph = {}));
+})(this, (function (exports) { 'use strict';
 
   // reutrns undefined if not found
+  function getNode(graph, nodeid) {
+    return graph.nodes.find((record) => record.id === nodeid);
+  }
   // returns undefined if not found
   function getNodeData(graph, nodeid) {
     return graph.nodeData.find((record) => record.nodeid === nodeid);
@@ -12,15 +18,37 @@
     return graph.edgeStyles.find((record) => record.edgeid === edgeid);
   }
 
+  var graphview = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    getEdgeStyle: getEdgeStyle,
+    getNode: getNode,
+    getNodeData: getNodeData
+  });
+
   const domNodes = [];
   const domEdges = [];
   let loadedGraph = null;
   let panX = 0;
   let panY = 0;
+  let frameWidth = 800;
+  let frameHeight = 600;
   let selected = null;
+  let mouseupToken = null;
+  let mousemoveToken = null;
+  let mousedownToken = null;
   let downItem = null;
   let soundBlipUrl = null;
+  let callbackNodeClicked = null;
+  let callbackEdgeClicked = null;
   let callbackSelected = null;
+
+  function setCallbackNodeClicked(callback) {
+    callbackNodeClicked = callback;
+  }
+
+  function setCallbackEdgeClicked(callback) {
+    callbackEdgeClicked = callback;
+  }
 
   function setCallbackSelected(callback) {
     callbackSelected = callback;
@@ -176,6 +204,14 @@
     }
   }
 
+  function setFrameSize(width, height) {
+    frameWidth = width;
+    frameHeight = height;
+    const frame = document.querySelector('.frame');
+    frame.style.width = `${frameWidth}px`;
+    frame.style.height = `${frameHeight}px`;
+  }
+
   function playBlip() {
     const audio = new Audio(soundBlipUrl);
     audio.play();
@@ -184,56 +220,54 @@
   function initFrame(frame, graph) {
     setGraph(graph);
 
-    frame.addEventListener('mouseup', (event) => {
+    mouseupToken = frame.addEventListener('mouseup', (event) => {
       const domNode = event.target.closest('.node');
       const domEdge = event.target.closest('.edge');
       if (domNode) {
         playBlip();
         selectItem(domNode);
+        if (callbackNodeClicked) callbackNodeClicked(domNode);
       } else if (domEdge) {
         playBlip();
         selectItem(domEdge);
+        if (callbackEdgeClicked) callbackEdgeClicked(domEdge);
       } else {
         selectItem(null);
       }
     });
 
-    frame.addEventListener('mousedown', (event) => {
+    mousedownToken = frame.addEventListener('mousedown', (event) => {
       downItem = event.target;
     });
 
-    frame.addEventListener('mousemove', (event) => {
+    mousemoveToken = frame.addEventListener('mousemove', (event) => {
       if (event.buttons === 1 && downItem === frame) {
         updatePan(event.movementX, event.movementY);
       }
     });
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const frame = document.querySelector('.frame');
-    fetch('/example/basic.json')
-      .then((response) => response.json())
-      .then((graph) => {
-        initFrame(frame, graph);
-        setSoundBlipUrl('/sound/blip_g3.wav');
-        setCallbackSelected((domItem) => {
-          if (!domItem) {
-            const nodeDataText = document.querySelector('.node-data-text');
-            nodeDataText.value = '';
-          } else if (domItem.classList.contains('node')) {
-            const nodeDataText = document.querySelector('.node-data-text');
-            const nodedata = getNodeData(graph, domItem.id);
-            if (nodedata) {
-            // ※ (null, 2) means pretty-print with 2-space indent
-              nodeDataText.value = JSON.stringify(nodedata, null, 2);
-            } else {
-              nodeDataText.value = '';
-            }
-          } else if (domItem.classList.contains('edge')) {
-            console.log(`edge selected : ${domItem.id}`);
-          }
-        });
-      });
+  function freeFrame(frame) {
+    frame.removeEventListener('mouseup', mouseupToken);
+    frame.removeEventListener('mousemove', mousemoveToken);
+    frame.removeEventListener('mousedown', mousedownToken);
+    clearGraph();
+  }
+
+  var domgraph = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    freeFrame: freeFrame,
+    initFrame: initFrame,
+    setCallbackEdgeClicked: setCallbackEdgeClicked,
+    setCallbackNodeClicked: setCallbackNodeClicked,
+    setCallbackSelected: setCallbackSelected,
+    setFrameSize: setFrameSize,
+    setGraph: setGraph,
+    setSoundBlipUrl: setSoundBlipUrl,
+    updatePan: updatePan
   });
 
-})();
+  exports.domgraph = domgraph;
+  exports.graphview = graphview;
+
+}));

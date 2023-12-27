@@ -4,8 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const frame = document.querySelector('.frame');
   fetch('/example/basic.json')
     .then((response) => response.json())
-    .then((graphObject) => {
-      nodegraph.domgraph.initFrame(frame, graphObject);
+    .then((graph) => {
+      nodegraph.domgraph.initFrame(frame, graph);
       nodegraph.domgraph.setSoundBlipUrl('/sound/blip_g3.wav');
       nodegraph.domgraph.setCallbackSelected((domItem) => {
         if (!domItem) {
@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
           nodeDataText.value = '';
         } else if (domItem.classList.contains('node')) {
           const nodeDataText = document.querySelector('.node-data-text');
-          const nodedata = nodegraph.graphview.getNodeData(graphObject, domItem.id);
+          const nodedata = nodegraph.graphview.getNodeData(graph, domItem.id);
           if (nodedata) {
           // ※ (null, 2) means pretty-print with 2-space indent
             nodeDataText.value = JSON.stringify(nodedata, null, 2);

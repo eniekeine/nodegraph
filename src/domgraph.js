@@ -1,4 +1,4 @@
-import { getNode, getNodeData, getEdgeStyle } from './graphview';
+import { getNodeData, getEdgeStyle } from './graphview';
 
 const domNodes = [];
 const domEdges = [];
