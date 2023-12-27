@@ -1,4 +1,4 @@
-import { getNodeData, getEdgeStyle } from './graphview';
+import { getNode, getNodeData, getEdgeStyle } from './graphview';
 
 const domNodes = [];
 const domEdges = [];
@@ -15,6 +15,7 @@ let downItem = null;
 let soundBlipUrl = null;
 let callbackNodeClicked = null;
 let callbackEdgeClicked = null;
+let callbackSelected = null;
 
 function setCallbackNodeClicked(callback) {
   callbackNodeClicked = callback;
@@ -22,6 +23,10 @@ function setCallbackNodeClicked(callback) {
 
 function setCallbackEdgeClicked(callback) {
   callbackEdgeClicked = callback;
+}
+
+function setCallbackSelected(callback) {
+  callbackSelected = callback;
 }
 
 function setSoundBlipUrl(url) { soundBlipUrl = url; }
@@ -37,15 +42,21 @@ function resetSelect() {
 function selectItem(item, reselect = false) {
   if (reselect === false && selected === item) { return; }
   resetSelect();
+  if (item === null) { return; }
   selected = item;
   selected.classList.add('selected');
+  callbackSelected(item);
 }
 
 function getCenterPosition(node) {
+  // getBoundingClinetRect returns coordinate in client area(full window except for the title bar)
+  // so we need to subtract the coordinate of the parent element
+  // to get the coordinate within the parent element
+  const parentRect = node.parentElement.getBoundingClientRect();
   const rect = node.getBoundingClientRect();
   return {
-    x: (rect.left + rect.right) * 0.5,
-    y: (rect.top + rect.bottom) * 0.5,
+    x: (rect.left + rect.right) * 0.5 - parentRect.left,
+    y: (rect.top + rect.bottom) * 0.5 - parentRect.top,
   };
 }
 
@@ -61,7 +72,7 @@ function makeDomNodeContent(graph, node) {
   if (nodedata.text) {
     const domNodeContent = document.createElement('div');
     domNodeContent.classList.add('node-content-text');
-    domNodeContent.textContent = nodedata.text;
+    domNodeContent.innerHTML = nodedata.text.replace(/\n/g, '<br />');
     return domNodeContent;
   }
   if (nodedata.image) {
@@ -84,11 +95,11 @@ function makeDomNode(graph, node) {
   } = node;
   const domNode = document.createElement('div');
   domNode.classList.add('node');
-  domNode.style.left = `${x}px`;
-  domNode.style.top = `${y}px`;
+  domNode.id = id;
+  domNode.style.left = `${x + panX}px`;
+  domNode.style.top = `${y + panY}px`;
   if (w) domNode.style.width = `${w}px`;
   if (h) domNode.style.height = `${h}px`;
-  domNode.id = id;
   const domNodeContent = makeDomNodeContent(graph, node);
   if (domNodeContent) domNode.appendChild(domNodeContent);
   return domNode;
@@ -119,6 +130,7 @@ function makeDomEdges(graph) {
     const l = dx * dx + dy * dy;
     const alpha = Math.atan2(dy, dx);
     const domEdge = document.createElement('div');
+    domEdge.id = edge.id;
     domEdge.classList.add('edge');
     const edgeStyle = getEdgeStyle(graph, edge.id);
     if (edgeStyle && edgeStyle.class !== undefined) {
@@ -134,7 +146,24 @@ function makeDomEdges(graph) {
   }
 }
 
-function updateGraph() {
+function clearGraph() {
+  loadedGraph = null;
+  domNodes.forEach((domNode) => domNode.remove());
+  domEdges.forEach((domEdge) => domEdge.remove());
+  domNodes.length = 0;
+  domEdges.length = 0;
+}
+
+function setGraph(graph) {
+  clearGraph();
+  loadedGraph = graph;
+  makeDomNodes(graph);
+  makeDomEdges(graph);
+}
+
+function updatePan(dx, dy) {
+  panX += dx;
+  panY += dy;
   for (let i = 0; i < domNodes.length; i += 1) {
     const node = domNodes[i];
     const jsonNode = loadedGraph.nodes[i];
@@ -148,11 +177,6 @@ function updateGraph() {
     edge.style.left = `${pos0.x}px`;
     edge.style.top = `${pos0.y}px`;
   }
-}
-
-function updatePan(dx, dy) {
-  panX += dx;
-  panY += dy;
 }
 
 function setFrameSize(width, height) {
@@ -169,21 +193,21 @@ function playBlip() {
 }
 
 function initFrame(frame, graph) {
-  loadedGraph = graph;
-  makeDomNodes(graph);
-  makeDomEdges(graph);
+  setGraph(graph);
 
   mouseupToken = frame.addEventListener('mouseup', (event) => {
-    const node = event.target.closest('.node');
-    const edge = event.target.closest('.edge');
-    if (node) {
+    const domNode = event.target.closest('.node');
+    const domEdge = event.target.closest('.edge');
+    if (domNode) {
       playBlip();
-      selectItem(node);
-      if (callbackNodeClicked) callbackNodeClicked(node);
-    } else if (edge) {
+      selectItem(domNode);
+      if (callbackNodeClicked) callbackNodeClicked(domNode);
+    } else if (domEdge) {
       playBlip();
-      selectItem(edge);
-      if (callbackEdgeClicked) callbackEdgeClicked(edge);
+      selectItem(domEdge);
+      if (callbackEdgeClicked) callbackEdgeClicked(domEdge);
+    } else {
+      selectItem(null);
     }
   });
 
@@ -194,24 +218,25 @@ function initFrame(frame, graph) {
   mousemoveToken = frame.addEventListener('mousemove', (event) => {
     if (event.buttons === 1 && downItem === frame) {
       updatePan(event.movementX, event.movementY);
-      updateGraph();
     }
   });
 }
 
-function freeGraph(frame) {
+function freeFrame(frame) {
   frame.removeEventListener('mouseup', mouseupToken);
   frame.removeEventListener('mousemove', mousemoveToken);
   frame.removeEventListener('mousedown', mousedownToken);
+  clearGraph();
 }
 
 export {
   initFrame,
-  freeGraph,
-  updateGraph,
+  freeFrame,
   updatePan,
   setFrameSize,
   setSoundBlipUrl,
   setCallbackNodeClicked,
   setCallbackEdgeClicked,
+  setCallbackSelected,
+  setGraph,
 };

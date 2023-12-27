@@ -1,0 +1,38 @@
+{
+  "nodes": [
+    { "id": "n1", "x": 100, "y": 100 },
+    { "id": "n2", "x": 500, "y": 100 },
+    {
+      "id": "n3",
+      "x": 500,
+      "y": 300,
+      "w": 64,
+      "h": 64
+    },
+    { "id": "n4", "x": 600, "y": 300 },
+    { "id": "n5", "x": 600, "y": 400 },
+    { "id": "n6", "x": 1100, "y": 300 }
+  ],
+  "edges": [
+    { "id": "e1", "fromto": ["n1", "n2"] },
+    { "id": "e2", "fromto": ["n1", "n3"] },
+    { "id": "e3", "fromto": ["n3", "n4"] },
+    { "id": "e4", "fromto": ["n5", "n6"] }
+  ],
+  "nodeData": [
+    { "nodeid": "n2", "text": "hello" },
+    { "nodeid": "n3", "image": "/image/graphicon/database-svgrepo-com.svg" },
+    {
+      "nodeid": "n4",
+      "html": "<div class=\"node-content-text\">A text sentence.</div>"
+    },
+    {
+      "nodeid": "n5",
+      "text": "This is multiline text.\n\nIn json file, you use \\n to denote line ending."
+    }
+  ],
+  "edgeStyles": [
+    { "edgeid": "e2", "class": "edge-custom1" },
+    { "edgeid": "e3", "class": "edge-custom2" }
+  ]
+}

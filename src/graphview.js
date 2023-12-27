@@ -1,3 +1,7 @@
+// reutrns undefined if not found
+function getNode(graph, nodeid) {
+  return graph.nodes.find((record) => record.id === nodeid);
+}
 // returns undefined if not found
 function getNodeData(graph, nodeid) {
   return graph.nodeData.find((record) => record.nodeid === nodeid);
@@ -9,6 +13,7 @@ function getEdgeStyle(graph, edgeid) {
 }
 
 export {
+  getNode,
   getNodeData,
   getEdgeStyle,
 };
