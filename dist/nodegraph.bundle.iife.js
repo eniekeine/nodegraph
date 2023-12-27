@@ -34,7 +34,6 @@ var nodegraph = (function (exports) {
   let mousemoveToken = null;
   let mousedownToken = null;
   let downItem = null;
-  let soundBlipUrl = null;
   let callbackNodeClicked = null;
   let callbackEdgeClicked = null;
   let callbackSelected = null;
@@ -50,8 +49,6 @@ var nodegraph = (function (exports) {
   function setCallbackSelected(callback) {
     callbackSelected = callback;
   }
-
-  function setSoundBlipUrl(url) { soundBlipUrl = url; }
 
   function resetSelect() {
     const selectedItems = document.querySelectorAll('.selected');
@@ -209,11 +206,6 @@ var nodegraph = (function (exports) {
     frame.style.height = `${frameHeight}px`;
   }
 
-  function playBlip() {
-    const audio = new Audio(soundBlipUrl);
-    audio.play();
-  }
-
   function initFrame(frame, graph) {
     setGraph(graph);
 
@@ -221,11 +213,9 @@ var nodegraph = (function (exports) {
       const domNode = event.target.closest('.node');
       const domEdge = event.target.closest('.edge');
       if (domNode) {
-        playBlip();
         selectItem(domNode);
         if (callbackNodeClicked) callbackNodeClicked(domNode);
       } else if (domEdge) {
-        playBlip();
         selectItem(domEdge);
         if (callbackEdgeClicked) callbackEdgeClicked(domEdge);
       } else {
@@ -260,7 +250,6 @@ var nodegraph = (function (exports) {
     setCallbackSelected: setCallbackSelected,
     setFrameSize: setFrameSize,
     setGraph: setGraph,
-    setSoundBlipUrl: setSoundBlipUrl,
     updatePan: updatePan
   });
 

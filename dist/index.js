@@ -19,14 +19,11 @@
   let panY = 0;
   let selected = null;
   let downItem = null;
-  let soundBlipUrl = null;
   let callbackSelected = null;
 
   function setCallbackSelected(callback) {
     callbackSelected = callback;
   }
-
-  function setSoundBlipUrl(url) { soundBlipUrl = url; }
 
   function resetSelect() {
     const selectedItems = document.querySelectorAll('.selected');
@@ -176,11 +173,6 @@
     }
   }
 
-  function playBlip() {
-    const audio = new Audio(soundBlipUrl);
-    audio.play();
-  }
-
   function initFrame(frame, graph) {
     setGraph(graph);
 
@@ -188,10 +180,8 @@
       const domNode = event.target.closest('.node');
       const domEdge = event.target.closest('.edge');
       if (domNode) {
-        playBlip();
         selectItem(domNode);
       } else if (domEdge) {
-        playBlip();
         selectItem(domEdge);
       } else {
         selectItem(null);
@@ -209,13 +199,18 @@
     });
   }
 
+  function playBlip() {
+    document.querySelector('.blipg3').play();
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     const frame = document.querySelector('.frame');
     fetch('/example/basic.json')
       .then((response) => response.json())
       .then((graph) => {
+        // initFrame must be called with frame element before any other calls
         initFrame(frame, graph);
-        setSoundBlipUrl('/sound/blip_g3.wav');
+        // setCallbackSelected is optional. set callback function to be called when node is selected.
         setCallbackSelected((domItem) => {
           if (!domItem) {
             const nodeDataText = document.querySelector('.node-data-text');
@@ -229,8 +224,10 @@
             } else {
               nodeDataText.value = '';
             }
+            playBlip();
           } else if (domItem.classList.contains('edge')) {
             console.log(`edge selected : ${domItem.id}`);
+            playBlip();
           }
         });
       });

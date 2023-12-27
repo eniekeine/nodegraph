@@ -12,7 +12,6 @@ let mouseupToken = null;
 let mousemoveToken = null;
 let mousedownToken = null;
 let downItem = null;
-let soundBlipUrl = null;
 let callbackNodeClicked = null;
 let callbackEdgeClicked = null;
 let callbackSelected = null;
@@ -28,8 +27,6 @@ function setCallbackEdgeClicked(callback) {
 function setCallbackSelected(callback) {
   callbackSelected = callback;
 }
-
-function setSoundBlipUrl(url) { soundBlipUrl = url; }
 
 function resetSelect() {
   const selectedItems = document.querySelectorAll('.selected');
@@ -187,11 +184,6 @@ function setFrameSize(width, height) {
   frame.style.height = `${frameHeight}px`;
 }
 
-function playBlip() {
-  const audio = new Audio(soundBlipUrl);
-  audio.play();
-}
-
 function initFrame(frame, graph) {
   setGraph(graph);
 
@@ -199,11 +191,9 @@ function initFrame(frame, graph) {
     const domNode = event.target.closest('.node');
     const domEdge = event.target.closest('.edge');
     if (domNode) {
-      playBlip();
       selectItem(domNode);
       if (callbackNodeClicked) callbackNodeClicked(domNode);
     } else if (domEdge) {
-      playBlip();
       selectItem(domEdge);
       if (callbackEdgeClicked) callbackEdgeClicked(domEdge);
     } else {
@@ -234,7 +224,6 @@ export {
   freeFrame,
   updatePan,
   setFrameSize,
-  setSoundBlipUrl,
   setCallbackNodeClicked,
   setCallbackEdgeClicked,
   setCallbackSelected,

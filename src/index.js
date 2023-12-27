@@ -1,12 +1,17 @@
 import * as nodegraph from './nodegraph';
 
+function playBlip() {
+  document.querySelector('.blipg3').play();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const frame = document.querySelector('.frame');
   fetch('/example/basic.json')
     .then((response) => response.json())
     .then((graph) => {
+      // initFrame must be called with frame element before any other calls
       nodegraph.domgraph.initFrame(frame, graph);
-      nodegraph.domgraph.setSoundBlipUrl('/sound/blip_g3.wav');
+      // setCallbackSelected is optional. set callback function to be called when node is selected.
       nodegraph.domgraph.setCallbackSelected((domItem) => {
         if (!domItem) {
           const nodeDataText = document.querySelector('.node-data-text');
@@ -20,8 +25,10 @@ document.addEventListener('DOMContentLoaded', () => {
           } else {
             nodeDataText.value = '';
           }
+          playBlip();
         } else if (domItem.classList.contains('edge')) {
           console.log(`edge selected : ${domItem.id}`);
+          playBlip();
         }
       });
     });
