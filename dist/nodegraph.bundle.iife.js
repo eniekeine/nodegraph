@@ -36,7 +36,7 @@ var nodegraph = (function (exports) {
   let downItem = null;
   let callbackNodeClicked = null;
   let callbackEdgeClicked = null;
-  let callbackSelected = null;
+  let callbackSelectionChanged = null;
 
   function setCallbackNodeClicked(callback) {
     callbackNodeClicked = callback;
@@ -46,8 +46,8 @@ var nodegraph = (function (exports) {
     callbackEdgeClicked = callback;
   }
 
-  function setCallbackSelected(callback) {
-    callbackSelected = callback;
+  function setCallbackSelectionChanged(callback) {
+    callbackSelectionChanged = callback;
   }
 
   function resetSelect() {
@@ -61,10 +61,9 @@ var nodegraph = (function (exports) {
   function selectItem(item, reselect = false) {
     if (reselect === false && selected === item) { return; }
     resetSelect();
-    if (item === null) { return; }
     selected = item;
-    selected.classList.add('selected');
-    callbackSelected(item);
+    if (item) item.classList.add('selected');
+    callbackSelectionChanged(item);
   }
 
   function getCenterPosition(node) {
@@ -119,6 +118,7 @@ var nodegraph = (function (exports) {
     domNode.style.top = `${y + panY}px`;
     if (w) domNode.style.width = `${w}px`;
     if (h) domNode.style.height = `${h}px`;
+    domNode.node = node;
     const domNodeContent = makeDomNodeContent(graph, node);
     if (domNodeContent) domNode.appendChild(domNodeContent);
     return domNode;
@@ -139,26 +139,31 @@ var nodegraph = (function (exports) {
     return getCenterPosition(node);
   }
 
+  function updateDomEdge(graph, domEdge) {
+    const { edge } = domEdge;
+    const pos0 = getNodePosition(edge.fromto[0]);
+    const pos1 = getNodePosition(edge.fromto[1]);
+    const dx = pos1.x - pos0.x;
+    const dy = pos1.y - pos0.y;
+    const l = dx * dx + dy * dy;
+    const alpha = Math.atan2(dy, dx);
+    domEdge.classList.add('edge');
+    const edgeStyle = getEdgeStyle(graph, edge.id);
+    if (edgeStyle && edgeStyle.class !== undefined) {
+      domEdge.classList.add(edgeStyle.class);
+    }
+    domEdge.style.left = `${pos0.x}px`;
+    domEdge.style.top = `${pos0.y}px`;
+    domEdge.style.transform = `rotate(${alpha}rad)`;
+    domEdge.style.width = `${Math.sqrt(l)}px`;
+  }
+
   function makeDomEdges(graph) {
     for (let i = 0; i < graph.edges.length; i += 1) {
       const edge = graph.edges[i];
-      const pos0 = getNodePosition(edge.fromto[0]);
-      const pos1 = getNodePosition(edge.fromto[1]);
-      const dx = pos1.x - pos0.x;
-      const dy = pos1.y - pos0.y;
-      const l = dx * dx + dy * dy;
-      const alpha = Math.atan2(dy, dx);
       const domEdge = document.createElement('div');
-      domEdge.id = edge.id;
-      domEdge.classList.add('edge');
-      const edgeStyle = getEdgeStyle(graph, edge.id);
-      if (edgeStyle && edgeStyle.class !== undefined) {
-        domEdge.classList.add(edgeStyle.class);
-      }
-      domEdge.style.left = `${pos0.x}px`;
-      domEdge.style.top = `${pos0.y}px`;
-      domEdge.style.transform = `rotate(${alpha}rad)`;
-      domEdge.style.width = `${Math.sqrt(l)}px`;
+      domEdge.edge = edge;
+      updateDomEdge(graph, domEdge);
       domEdges.push(domEdge);
       const frame = document.querySelector('.frame');
       frame.insertBefore(domEdge, frame.firstChild);
@@ -184,17 +189,13 @@ var nodegraph = (function (exports) {
     panX += dx;
     panY += dy;
     for (let i = 0; i < domNodes.length; i += 1) {
-      const node = domNodes[i];
-      const jsonNode = loadedGraph.nodes[i];
-      node.style.left = `${jsonNode.x + panX}px`;
-      node.style.top = `${jsonNode.y + panY}px`;
+      const domNode = domNodes[i];
+      domNode.style.left = `${domNode.node.x + panX}px`;
+      domNode.style.top = `${domNode.node.y + panY}px`;
     }
     for (let i = 0; i < domEdges.length; i += 1) {
-      const edge = domEdges[i];
-      const jsonEdge = loadedGraph.edges[i];
-      const pos0 = getNodePosition(jsonEdge.fromto[0]);
-      edge.style.left = `${pos0.x}px`;
-      edge.style.top = `${pos0.y}px`;
+      const domEdge = domEdges[i];
+      updateDomEdge(loadedGraph, domEdge);
     }
   }
 
@@ -208,8 +209,8 @@ var nodegraph = (function (exports) {
 
   function initFrame(frame, graph) {
     setGraph(graph);
-
     mouseupToken = frame.addEventListener('mouseup', (event) => {
+      downItem = null;
       const domNode = event.target.closest('.node');
       const domEdge = event.target.closest('.edge');
       if (domNode) {
@@ -228,8 +229,16 @@ var nodegraph = (function (exports) {
     });
 
     mousemoveToken = frame.addEventListener('mousemove', (event) => {
-      if (event.buttons === 1 && downItem === frame) {
-        updatePan(event.movementX, event.movementY);
+      if (event.buttons === 1) {
+        const domNode = downItem.closest('.node');
+        if (downItem === frame) {
+          updatePan(event.movementX, event.movementY);
+        } else if (domNode) {
+          console.log(`move node ${domNode.node.id}`);
+          domNode.node.x += event.movementX;
+          domNode.node.y += event.movementY;
+          updatePan(0, 0);
+        }
       }
     });
   }
@@ -247,7 +256,7 @@ var nodegraph = (function (exports) {
     initFrame: initFrame,
     setCallbackEdgeClicked: setCallbackEdgeClicked,
     setCallbackNodeClicked: setCallbackNodeClicked,
-    setCallbackSelected: setCallbackSelected,
+    setCallbackSelectionChanged: setCallbackSelectionChanged,
     setFrameSize: setFrameSize,
     setGraph: setGraph,
     updatePan: updatePan

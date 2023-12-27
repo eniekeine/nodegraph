@@ -42,9 +42,14 @@ body{
 .right-sidebar{
     display: flex;
     background: hsla(103, 50%, 50%, 1.0);
-    min-width: 12em;
+    min-width: 16em;
+    width: 30%;
     overflow-x:hidden;
     overflow-y:scroll;
+}
+.right-sidebar-section{
+    width: 100%;
+    padding: 1rem;
 }
 .edge-custom1{
     border-top: 4px solid #cf7f40;

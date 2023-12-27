@@ -24,7 +24,7 @@
     display:inline-flex;
     justify-content: center;
     align-items: center;
-    padding: 0.2em;
+    padding: 1em;
 }
 .node-content-image{
     min-width: 32px;
@@ -34,6 +34,13 @@
     background-color: none;
     border:none;
     object-fit: contain;
+    
+    user-drag: none;
+    -webkit-user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
 }
 .node.selected{
     border: 2px solid #cf7f40    

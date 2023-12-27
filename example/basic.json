@@ -17,7 +17,8 @@
     { "id": "e1", "fromto": ["n1", "n2"] },
     { "id": "e2", "fromto": ["n1", "n3"] },
     { "id": "e3", "fromto": ["n3", "n4"] },
-    { "id": "e4", "fromto": ["n5", "n6"] }
+    { "id": "e4", "fromto": ["n5", "n6"] },
+    { "id": "e5", "fromto": ["n3", "n5"] }
   ],
   "nodeData": [
     { "nodeid": "n2", "text": "hello" },

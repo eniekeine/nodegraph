@@ -19,10 +19,10 @@
   let panY = 0;
   let selected = null;
   let downItem = null;
-  let callbackSelected = null;
+  let callbackSelectionChanged = null;
 
-  function setCallbackSelected(callback) {
-    callbackSelected = callback;
+  function setCallbackSelectionChanged(callback) {
+    callbackSelectionChanged = callback;
   }
 
   function resetSelect() {
@@ -36,10 +36,9 @@
   function selectItem(item, reselect = false) {
     if (reselect === false && selected === item) { return; }
     resetSelect();
-    if (item === null) { return; }
     selected = item;
-    selected.classList.add('selected');
-    callbackSelected(item);
+    if (item) item.classList.add('selected');
+    callbackSelectionChanged(item);
   }
 
   function getCenterPosition(node) {
@@ -94,6 +93,7 @@
     domNode.style.top = `${y + panY}px`;
     if (w) domNode.style.width = `${w}px`;
     if (h) domNode.style.height = `${h}px`;
+    domNode.node = node;
     const domNodeContent = makeDomNodeContent(graph, node);
     if (domNodeContent) domNode.appendChild(domNodeContent);
     return domNode;
@@ -114,26 +114,31 @@
     return getCenterPosition(node);
   }
 
+  function updateDomEdge(graph, domEdge) {
+    const { edge } = domEdge;
+    const pos0 = getNodePosition(edge.fromto[0]);
+    const pos1 = getNodePosition(edge.fromto[1]);
+    const dx = pos1.x - pos0.x;
+    const dy = pos1.y - pos0.y;
+    const l = dx * dx + dy * dy;
+    const alpha = Math.atan2(dy, dx);
+    domEdge.classList.add('edge');
+    const edgeStyle = getEdgeStyle(graph, edge.id);
+    if (edgeStyle && edgeStyle.class !== undefined) {
+      domEdge.classList.add(edgeStyle.class);
+    }
+    domEdge.style.left = `${pos0.x}px`;
+    domEdge.style.top = `${pos0.y}px`;
+    domEdge.style.transform = `rotate(${alpha}rad)`;
+    domEdge.style.width = `${Math.sqrt(l)}px`;
+  }
+
   function makeDomEdges(graph) {
     for (let i = 0; i < graph.edges.length; i += 1) {
       const edge = graph.edges[i];
-      const pos0 = getNodePosition(edge.fromto[0]);
-      const pos1 = getNodePosition(edge.fromto[1]);
-      const dx = pos1.x - pos0.x;
-      const dy = pos1.y - pos0.y;
-      const l = dx * dx + dy * dy;
-      const alpha = Math.atan2(dy, dx);
       const domEdge = document.createElement('div');
-      domEdge.id = edge.id;
-      domEdge.classList.add('edge');
-      const edgeStyle = getEdgeStyle(graph, edge.id);
-      if (edgeStyle && edgeStyle.class !== undefined) {
-        domEdge.classList.add(edgeStyle.class);
-      }
-      domEdge.style.left = `${pos0.x}px`;
-      domEdge.style.top = `${pos0.y}px`;
-      domEdge.style.transform = `rotate(${alpha}rad)`;
-      domEdge.style.width = `${Math.sqrt(l)}px`;
+      domEdge.edge = edge;
+      updateDomEdge(graph, domEdge);
       domEdges.push(domEdge);
       const frame = document.querySelector('.frame');
       frame.insertBefore(domEdge, frame.firstChild);
@@ -159,24 +164,20 @@
     panX += dx;
     panY += dy;
     for (let i = 0; i < domNodes.length; i += 1) {
-      const node = domNodes[i];
-      const jsonNode = loadedGraph.nodes[i];
-      node.style.left = `${jsonNode.x + panX}px`;
-      node.style.top = `${jsonNode.y + panY}px`;
+      const domNode = domNodes[i];
+      domNode.style.left = `${domNode.node.x + panX}px`;
+      domNode.style.top = `${domNode.node.y + panY}px`;
     }
     for (let i = 0; i < domEdges.length; i += 1) {
-      const edge = domEdges[i];
-      const jsonEdge = loadedGraph.edges[i];
-      const pos0 = getNodePosition(jsonEdge.fromto[0]);
-      edge.style.left = `${pos0.x}px`;
-      edge.style.top = `${pos0.y}px`;
+      const domEdge = domEdges[i];
+      updateDomEdge(loadedGraph, domEdge);
     }
   }
 
   function initFrame(frame, graph) {
     setGraph(graph);
-
     frame.addEventListener('mouseup', (event) => {
+      downItem = null;
       const domNode = event.target.closest('.node');
       const domEdge = event.target.closest('.edge');
       if (domNode) {
@@ -193,14 +194,47 @@
     });
 
     frame.addEventListener('mousemove', (event) => {
-      if (event.buttons === 1 && downItem === frame) {
-        updatePan(event.movementX, event.movementY);
+      if (event.buttons === 1) {
+        const domNode = downItem.closest('.node');
+        if (downItem === frame) {
+          updatePan(event.movementX, event.movementY);
+        } else if (domNode) {
+          console.log(`move node ${domNode.node.id}`);
+          domNode.node.x += event.movementX;
+          domNode.node.y += event.movementY;
+          updatePan(0, 0);
+        }
       }
     });
   }
 
   function playBlip() {
     document.querySelector('.blipg3').play();
+  }
+
+  function onSelectionChanged(graph, domItem) {
+    if (!domItem) {
+      console.log('deselected');
+      // if domItem is null, it means user deselected by clicking on empty space.
+      const nodeDataText = document.querySelector('.node-data-text');
+      nodeDataText.value = '';
+    } else if (domItem.classList.contains('node')) {
+      console.log(`node selected : ${domItem.id}`);
+      // if domItem has 'node' class, user selected a node
+      const nodeDataText = document.querySelector('.node-data-text');
+      const nodedata = getNodeData(graph, domItem.id);
+      if (nodedata) {
+      // ※ (null, 2) means pretty-print with 2-space indent
+        nodeDataText.value = JSON.stringify(nodedata, null, 2);
+      } else {
+        nodeDataText.value = '';
+      }
+      playBlip();
+    } else if (domItem.classList.contains('edge')) {
+      // if domItem has 'edge' class, user selected an edge
+      console.log(`edge selected : ${domItem.id}`);
+      playBlip();
+    }
   }
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -210,25 +244,45 @@
       .then((graph) => {
         // initFrame must be called with frame element before any other calls
         initFrame(frame, graph);
-        // setCallbackSelected is optional. set callback function to be called when node is selected.
-        setCallbackSelected((domItem) => {
-          if (!domItem) {
-            const nodeDataText = document.querySelector('.node-data-text');
-            nodeDataText.value = '';
-          } else if (domItem.classList.contains('node')) {
-            const nodeDataText = document.querySelector('.node-data-text');
-            const nodedata = getNodeData(graph, domItem.id);
-            if (nodedata) {
-            // ※ (null, 2) means pretty-print with 2-space indent
-              nodeDataText.value = JSON.stringify(nodedata, null, 2);
-            } else {
-              nodeDataText.value = '';
-            }
-            playBlip();
-          } else if (domItem.classList.contains('edge')) {
-            console.log(`edge selected : ${domItem.id}`);
-            playBlip();
+
+        // optional. set callback function to be called when selection is changed.
+        setCallbackSelectionChanged((domItem) => {
+          onSelectionChanged(graph, domItem);
+        });
+
+        document.querySelector('.btn-download').addEventListener('click', () => {
+          const content = JSON.stringify(graph, null, 2);
+          const a = document.createElement('a');
+          const file = new Blob([content], { type: 'text/plain' });
+          a.href = URL.createObjectURL(file);
+          a.download = 'graph.json';
+          a.click();
+        });
+
+        document.querySelector('.btn-upload').addEventListener('click', () => {
+          const fileInput = document.getElementById('file-input');
+          const file = fileInput.files[0];
+
+          if (!file) {
+            // console.log('No file selected!');
+            return;
           }
+
+          const reader = new FileReader();
+
+          reader.onload = (event) => {
+            try {
+              setGraph(JSON.parse(event.target.result));
+            } catch (e) {
+              console.error('Error parsing JSON!', e);
+            }
+          };
+
+          reader.onerror = function () {
+            console.error('Error reading file!');
+          };
+
+          reader.readAsText(file);
         });
       });
   });
