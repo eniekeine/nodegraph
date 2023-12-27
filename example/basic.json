@@ -22,7 +22,10 @@
   ],
   "nodeData": [
     { "nodeid": "n2", "text": "hello" },
-    { "nodeid": "n3", "image": "/image/graphicon/database-svgrepo-com.svg" },
+    {
+      "nodeid": "n3",
+      "image": "https://raw.githubusercontent.com/eniekeine/nodegraph/master/image/graphicon/database-svgrepo-com.svg"
+    },
     {
       "nodeid": "n4",
       "html": "<div class=\"node-content-text\">A text sentence.</div>"
