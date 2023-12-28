@@ -1,0 +1,17 @@
+.page{
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+.frame1{
+    width: 480px;
+    height: 360px;
+    margin-bottom: 1rem;
+}
+.frame2{
+    width: 480px;
+    height: 360px;
+    margin-bottom: 1rem;
+}

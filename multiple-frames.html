@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>multiple frames</title>
+    <link type="text/css" rel="stylesheet" href="nodegraph.css">
+    <link type="text/css" rel="stylesheet" href="multiple-frames.css">
+    <script src="dist/nodegraph.bundle.umd.js" type="text/javascript"></script>
+    <script defer>
+        window.addEventListener('load', function() {
+            fetch('/example/basic.json')
+                .then((response) => response.json())
+                .then((graph) => {
+                    let frame1 = document.querySelector('.frame1');
+                    nodegraph.domgraph.initFrame(frame1);
+                    nodegraph.domgraph.setGraph(frame1, graph);
+                });
+            fetch('/example/animal.json')
+            .then((response)=>response.json())
+            .then((graph)=>{
+                let frame2 = document.querySelector('.frame2');
+                nodegraph.domgraph.initFrame(frame2);
+                nodegraph.domgraph.setGraph(frame2, graph);
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="page">
+        <div class="frame frame1">
+        </div>
+        <div class="frame frame2">
+        </div>
+    </div>
+</body>
+</html>

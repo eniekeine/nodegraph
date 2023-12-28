@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>nodegraph editor</title>
     <link type="text/css" rel="stylesheet" href="nodegraph.css">
     <link type="text/css" rel="stylesheet" href="index.css">
     <script src="dist/nodegraph.bundle.umd.js" type="text/javascript"></script>
@@ -17,24 +17,51 @@
         </div>
         <div class="page-middle">
         <div class="frame-area">
-            <div class="frame">
+            <div class="frame frame1">
             </div>
         </div>
         <div class="right-sidebar">
             <div class="right-sidebar-section">
-                <div class="node-info">
-                    <div class="node-info-title">Node Info</div>
-                    <div class="node-info-x">X: 0</div>
-                    <div class="node-info-y">Y: 0</div>
+                <div class="sidebar-wnd edge-edit-wnd hidden">
+                    <div class="sidebar-wnd-titlebar">Edge</div>
+                    <div class="sidebar-wnd-form">
+                        <div class="sidebar-wnd-form-row">
+                            <div class="sidebar-wnd-form-row-label">Note :</div>
+                            <div class="sidebar-wnd-form-row-input">
+                                <textarea class="form-edge-note" type="text"></textarea>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="node-data">
-                    <textarea class="node-data-text">
-                    </textarea>
+                <div class="sidebar-wnd node-edit-wnd hidden">
+                    <div class="sidebar-wnd-titlebar">Node</div>
+                    <div class="sidebar-wnd-form">
+                        <div class="sidebar-wnd-form-row">
+                            <div class="sidebar-wnd-form-row-label">Text</div>
+                            <div class="sidebar-wnd-form-row-input">
+                                <textarea class="form-node-text" type="text"></textarea>
+                            </div>
+                        </div>
+                        <div class="sidebar-wnd-form-row">
+                            <div class="sidebar-wnd-form-row-label">Image</div>
+                            <div class="sidebar-wnd-form-row-input">
+                                <textarea class="form-node-image" type="text"></textarea>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <button class="btn-download">download</button>
-                <input type="file" id="file-input">
-                <button class="btn-upload">upload</button>            
             </div>
+            <div class="right-sidebar-section">
+                <div class="sidebar-wnd">
+                    <div class="sidebar-wnd-titlebar">Import/Export</div>
+                    <div class="sidebar-wnd-form">
+                        <button class="btn-download">download</button>
+                        <input type="file" id="file-input" hidden>
+                        <button class="btn-upload">upload</button>
+                    </div>
+                </div>
+            </div>
+            
         </div>
         </div>
     </div>

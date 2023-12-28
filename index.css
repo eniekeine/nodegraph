@@ -41,6 +41,7 @@ body{
 }
 .right-sidebar{
     display: flex;
+    flex-direction: column;
     background: hsla(103, 50%, 50%, 1.0);
     min-width: 16em;
     width: 30%;
@@ -48,8 +49,10 @@ body{
     overflow-y:scroll;
 }
 .right-sidebar-section{
-    width: 100%;
-    padding: 1rem;
+    display:flex;
+    flex-direction: column;
+    margin-bottom: 2px;
+    height: fit-content;
 }
 .edge-custom1{
     border-top: 4px solid #cf7f40;
@@ -61,4 +64,51 @@ body{
     width: 100%;
     height: 360px;
     overflow:scroll;
+}
+.sidebar-wnd{
+    width: 100%;
+    background-color: darkgreen;
+    border-radius: 6px;
+    display:flex;
+    flex-direction: column;
+}
+.sidebar-wnd-titlebar{
+    height: 1rem;
+    padding-left: 0.5rem;
+    padding-top:0.5rem;
+    padding-bottom:0.5rem;
+    display:flex;
+    background-color: aliceblue;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+}
+.sidebar-wnd-form{
+    display:flex;
+    flex-direction: column;
+    background-color: #cf7f40;
+    height: 100%;
+    padding: 1rem;
+    color:black;
+}
+.sidebar-wnd-form-row{
+    display:flex;
+    flex-direction: row;
+}
+.sidebar-wnd-form-row-label{
+    width: 5rem;
+    display:flex;
+    justify-content: left;
+    align-items: center;
+}
+.sidebar-wnd-form-row-input{
+    width: 100%;
+    display:flex;
+    flex-direction: column;
+    justify-content: left;
+    align-items: center;
+    color:black;
+}
+.hidden{
+    display:none;
 }

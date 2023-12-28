@@ -1,0 +1,19 @@
+{
+  "nodes": [
+    { "id": "bird", "x": 300, "y": 50 },
+    { "id": "penguin", "x": 100, "y": 250 },
+    { "id": "pigeon", "x": 300, "y": 250 },
+    { "id": "eagle", "x": 500, "y": 250 }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "fromto": ["bird", "penguin"],
+      "note": "can't fly"
+    },
+    { "id": "e2", "fromto": ["bird", "pigeon"] },
+    { "id": "e3", "fromto": ["bird", "eagle"] }
+  ],
+  "nodeData": [],
+  "edgeStyles": []
+}

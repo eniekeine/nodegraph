@@ -21,6 +21,7 @@
     min-height: 32px;
     background-color: #1d6e21;
     border-radius: 8px;
+    border: 2px solid #ffffff;
     display:inline-flex;
     justify-content: center;
     align-items: center;
@@ -53,4 +54,17 @@
 }
 .edge.selected{
     border: 2px solid red;
+}
+.edge-note{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+}
+.ghost-edge{
+    position: absolute;
+    background-color: none;
+    border-top: 4px solid #ffffff;
+    transform-origin: left center;
 }
