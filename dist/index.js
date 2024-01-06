@@ -3,9 +3,18 @@
 
   /* eslint-disable no-param-reassign */
   // reutrns undefined if not found
+
   // returns undefined if not found
   function getNodeData(graph, nodeid) {
     return graph.nodeData.find((record) => record.nodeid === nodeid);
+  }
+
+  function makeNodeData(graph, nodeid) {
+    const nodeData = {
+      nodeid,
+    };
+    graph.nodeData.push(nodeData);
+    return nodeData;
   }
 
   // returns undefined if not found
@@ -14,6 +23,22 @@
       && record.fromto[1] === toNodeId)
       || (record.fromto[0] === toNodeId
       && record.fromto[1] === fromNodeId));
+  }
+
+  function findEdgesByNode(graph, nodeId) {
+    return graph.edges.filter((record) => record.fromto[0] === nodeId || record.fromto[1] === nodeId);
+  }
+
+  function removeEdge(graph, edgeId) {
+    graph.edges.splice(graph.edges.findIndex((record) => record.id === edgeId), 1);
+  }
+
+  function removeNode(graph, nodeId) {
+    graph.nodes.splice(graph.nodes.findIndex((record) => record.id === nodeId), 1);
+    const edges = findEdgesByNode(graph, nodeId);
+    for (let i = 0; i < edges.length; i += 1) {
+      removeEdge(graph, edges[i].id);
+    }
   }
 
   // returns undefined if not found
@@ -89,6 +114,7 @@
     domNode.style.top = `${y + frame.panY}px`;
     if (w) domNode.style.width = `${w}px`;
     if (h) domNode.style.height = `${h}px`;
+    domNode.frame = frame;
     domNode.graph = graph;
     domNode.node = node;
     const domNodeContent = makeDomNodeContent(graph, node);
@@ -110,22 +136,33 @@
   }
 
   // apply what node data to domNode.
-  function updateDomNode(frame, graph, domNode) {
+  function updateDomNode(domNode) {
+    const { graph, frame } = domNode;
     // get node data
     const nodeData = getNodeData(graph, domNode.id);
-    // if node data has text property, display it
-    if (nodeData && nodeData.text) {
+    if (nodeData && nodeData.text && nodeData.text !== '') {
+      // if node data has text property, display it
       const elemText = domNode.querySelector('.node-content-text');
       elemText.innerHTML = nodeData.text.replace(/\n/g, '<br />');
-    }
-    // if node data has image property, display it
-    if (nodeData && nodeData.image) {
+    } else if (nodeData && nodeData.image && nodeData.image !== '') {
+      // if node data has image property, display it
       const elemImage = domNode.querySelector('.node-content-image');
       elemImage.src = nodeData.image;
+    } else {
+      const elemText = domNode.querySelector('.node-content-text');
+      elemText.innerHTML = domNode.id;
     }
     // node position is at (node.x, node.y) + (panX, panY)
     domNode.style.left = `${domNode.node.x + frame.panX}px`;
     domNode.style.top = `${domNode.node.y + frame.panY}px`;
+  }
+
+  function augmentDomEdgeNote(domEdge, note) {
+    const domNote = document.createElement('div');
+    domNote.classList.add('edge-note');
+    domNote.textContent = note;
+    domEdge.appendChild(domNote);
+    domEdge.domNote = domNote;
   }
 
   function updateDomEdge(domEdge) {
@@ -151,28 +188,25 @@
     if (domEdge.domNote) {
       const { domNote } = domEdge;
       domNote.innerHTML = edge.note;
+    } else if (edge.note !== undefined) {
+      augmentDomEdgeNote(domEdge, edge.note);
     }
   }
 
-  function makeDomEdge(graph, edge) {
+  function makeDomEdge(frame, graph, edge) {
     const domEdge = document.createElement('div');
+    domEdge.frame = frame;
     domEdge.graph = graph;
     domEdge.edge = edge;
     domEdge.id = edge.id;
-    if (edge.note) {
-      const domNote = document.createElement('div');
-      domNote.classList.add('edge-note');
-      domNote.textContent = edge.note;
-      domEdge.appendChild(domNote);
-      domEdge.domNote = domNote;
-    }
+    if (edge.note) augmentDomEdgeNote(domEdge, edge.note);
     return domEdge;
   }
 
   function makeDomEdges(frame, graph) {
     for (let i = 0; i < graph.edges.length; i += 1) {
       const edge = graph.edges[i];
-      const domEdge = makeDomEdge(graph, edge);
+      const domEdge = makeDomEdge(frame, graph, edge);
       frame.insertBefore(domEdge, frame.firstChild);
       updateDomEdge(domEdge);
     }
@@ -191,12 +225,15 @@
       const node = frame.graph.nodes[i];
       let domNode = document.getElementById(node.id);
       if (domNode) {
-        updateDomNode(frame, frame.graph, domNode);
+        // update content of existing node
+        updateDomNode(domNode);
       } else {
+        // create new node that are in the graph
         domNode = makeDomNode(frame, frame.graph, node);
         frame.appendChild(domNode);
       }
     }
+    // delete nodes that are not in the graph
     for (let i = 0; i < domNodes.length; i += 1) {
       const domNode = domNodes[i];
       if (frame.graph.nodes.includes(domNode.node) === false) { domNode.remove(); }
@@ -259,6 +296,18 @@
       if (ghostEdge) ghostEdge.remove();
     });
 
+    document.addEventListener('keyup', (event) => {
+      // console.log('keyup');
+      if (frame.selected && event.key === 'Delete') {
+        if (frame.selected.classList.contains('node')) {
+          removeNode(frame.graph, frame.selected.id);
+        } else if (frame.selected.classList.contains('edge')) {
+          removeEdge(frame.graph, frame.selected.id);
+        }
+        updateFrame(frame);
+      }
+    });
+
     frame.addEventListener('mousedown', (event) => {
       frame.dragBeginNode = event.target.closest('.node');
       if (frame.dragBeginNode && event.shiftKey) {
@@ -267,7 +316,6 @@
         ghostEdge.classList.add('ghost-edge');
         frame.insertBefore(ghostEdge, frame.firstChild);
       }
-      event.preventDefault();
     });
 
     frame.addEventListener('mousemove', (event) => {
@@ -305,34 +353,43 @@
 
     frame.addEventListener('dblclick', (event) => {
       const domNode = event.target.closest('.node');
-      const domEdge = event.target.closest('.edge');
       if (domNode) {
         selectItem(frame, domNode);
         if (frame.callbackNodeDoubleClicked) frame.callbackNodeDoubleClicked(domNode);
-      } else if (domEdge) {
+        return;
+      }
+
+      const domEdge = event.target.closest('.edge');
+      if (domEdge) {
         selectItem(frame, domEdge);
         if (frame.callbackEdgeDoubleClicked) frame.callbackEdgeDoubleClicked(domEdge);
-      } else {
-        frame.graph.nodes.push({
-          id: `node${frame.graph.nodes.length}`,
-          x: event.clientX - frame.getBoundingClientRect().left - frame.panX,
-          y: event.clientY - frame.getBoundingClientRect().top - frame.panY,
-        });
-        updateFrame(frame);
+        return;
       }
+
+      frame.graph.nodes.push({
+        id: `node${frame.graph.nodes.length}`,
+        x: event.clientX - frame.getBoundingClientRect().left - frame.panX,
+        y: event.clientY - frame.getBoundingClientRect().top - frame.panY,
+      });
+      updateFrame(frame);
     });
   }
 
+  function setEdgeNote(domEdge, note) {
+    const { edge } = domEdge;
+    edge.note = note;
+    updateDomEdge(domEdge);
+  }
+
   function setNodeText(domNode, text) {
-    const nodeData = getNodeData(domNode.graph, domNode.id);
+    let nodeData = getNodeData(domNode.graph, domNode.id);
+    if (nodeData === undefined) nodeData = makeNodeData(domNode.graph, domNode.id);
     nodeData.text = text;
-    updateDomNode(domNode);
   }
 
   function setNodeImage(domNode, image) {
     const nodeData = getNodeData(domNode.graph, domNode.id);
     nodeData.image = image;
-    updateDomNode(domNode);
   }
 
   function playBlip() {
@@ -350,7 +407,9 @@
   function updateEdgeWnd() {
     const formEdgeNote = document.querySelector('.form-edge-note');
     const domEdge = getEdgeWndTarget();
-    formEdgeNote.innerHTML = domEdge.edge.note;
+    const { note } = domEdge.edge;
+    console.log('updateEdgeWnd', note);
+    formEdgeNote.value = (note === undefined) ? '' : note;
   }
 
   function setNodeWndTarget(domNode) {
@@ -380,12 +439,12 @@
 
   function onSelectionChanged(graph, domItem) {
     if (!domItem) {
-      // if domItem is null, it means user deselected by clicking on empty space.
+      // * User Selected Empty Space
       // console.log('deselected');
       document.querySelector('.edge-edit-wnd').classList.add('hidden');
       document.querySelector('.node-edit-wnd').classList.add('hidden');
     } else if (domItem.classList.contains('node')) {
-      // if domItem has 'node' class, user selected a node
+      // * User Selected Node
       // console.log(`node selected : ${domItem.id}`);
       setNodeWndTarget(domItem);
       updateNodeWnd(graph);
@@ -393,7 +452,7 @@
       document.querySelector('.node-edit-wnd').classList.remove('hidden');
       playBlip();
     } else if (domItem.classList.contains('edge')) {
-      // if domItem has 'edge' class, user selected an edge
+      // * User Selected Edge
       // console.log(`edge selected : ${domItem.id}`);
       setEdgeWndTarget(domItem);
       updateEdgeWnd();
@@ -411,7 +470,9 @@
       const domEdge = elemEdgeEditWnd.target;
       if (domEdge) {
         if (event.target === document.querySelector('.form-edge-note')) {
+          console.log(event.target.value);
           setEdgeNote(domEdge, event.target.value);
+          updateFrame(frame);
         }
       }
     });
@@ -420,9 +481,13 @@
       const domNode = elemNodeEditWnd.target;
       if (domNode) {
         if (event.target === document.querySelector('.form-node-text')) {
-          setNodeText(domNode, event.target.value);
+          const nodeText = event.target.value;
+          setNodeText(domNode, nodeText);
+          updateFrame(frame);
         } else if (event.target === document.querySelector('.form-node-image')) {
-          setNodeImage(domNode, event.target.value);
+          const nodeImgSrc = event.target.value;
+          setNodeImage(domNode, nodeImgSrc);
+          updateFrame(frame);
         }
       }
     });
@@ -446,10 +511,11 @@
           a.download = 'graph.json';
           a.click();
         });
-
+        const fileInput = document.getElementById('file-input');
         document.querySelector('.btn-upload').addEventListener('click', () => {
-          const fileInput = document.getElementById('file-input');
           fileInput.click();
+        });
+        fileInput.addEventListener('change', (event) => {
           const file = fileInput.files[0];
 
           if (!file) {
@@ -461,7 +527,9 @@
 
           reader.onload = (event) => {
             try {
-              setGraph(JSON.parse(event.target.result));
+              const parsed = JSON.parse(event.target.result);
+              console.log(parsed);
+              setGraph(frame, parsed);
             } catch (e) {
               console.error('Error parsing JSON!', e);
             }

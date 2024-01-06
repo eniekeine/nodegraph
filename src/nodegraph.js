@@ -3,9 +3,18 @@
 function getNode(graph, nodeid) {
   return graph.nodes.find((record) => record.id === nodeid);
 }
+
 // returns undefined if not found
 function getNodeData(graph, nodeid) {
   return graph.nodeData.find((record) => record.nodeid === nodeid);
+}
+
+function makeNodeData(graph, nodeid) {
+  const nodeData = {
+    nodeid,
+  };
+  graph.nodeData.push(nodeData);
+  return nodeData;
 }
 
 // returns undefined if not found
@@ -19,6 +28,22 @@ function findEdge(graph, fromNodeId, toNodeId) {
     && record.fromto[1] === toNodeId)
     || (record.fromto[0] === toNodeId
     && record.fromto[1] === fromNodeId));
+}
+
+function findEdgesByNode(graph, nodeId) {
+  return graph.edges.filter((record) => record.fromto[0] === nodeId || record.fromto[1] === nodeId);
+}
+
+function removeEdge(graph, edgeId) {
+  graph.edges.splice(graph.edges.findIndex((record) => record.id === edgeId), 1);
+}
+
+function removeNode(graph, nodeId) {
+  graph.nodes.splice(graph.nodes.findIndex((record) => record.id === nodeId), 1);
+  const edges = findEdgesByNode(graph, nodeId);
+  for (let i = 0; i < edges.length; i += 1) {
+    removeEdge(graph, edges[i].id);
+  }
 }
 
 // returns undefined if not found
@@ -94,6 +119,7 @@ function makeDomNode(frame, graph, node) {
   domNode.style.top = `${y + frame.panY}px`;
   if (w) domNode.style.width = `${w}px`;
   if (h) domNode.style.height = `${h}px`;
+  domNode.frame = frame;
   domNode.graph = graph;
   domNode.node = node;
   const domNodeContent = makeDomNodeContent(graph, node);
@@ -115,22 +141,33 @@ function getNodePosition(nodeid) {
 }
 
 // apply what node data to domNode.
-function updateDomNode(frame, graph, domNode) {
+function updateDomNode(domNode) {
+  const { graph, frame } = domNode;
   // get node data
   const nodeData = getNodeData(graph, domNode.id);
-  // if node data has text property, display it
-  if (nodeData && nodeData.text) {
+  if (nodeData && nodeData.text && nodeData.text !== '') {
+    // if node data has text property, display it
     const elemText = domNode.querySelector('.node-content-text');
     elemText.innerHTML = nodeData.text.replace(/\n/g, '<br />');
-  }
-  // if node data has image property, display it
-  if (nodeData && nodeData.image) {
+  } else if (nodeData && nodeData.image && nodeData.image !== '') {
+    // if node data has image property, display it
     const elemImage = domNode.querySelector('.node-content-image');
     elemImage.src = nodeData.image;
+  } else {
+    const elemText = domNode.querySelector('.node-content-text');
+    elemText.innerHTML = domNode.id;
   }
   // node position is at (node.x, node.y) + (panX, panY)
   domNode.style.left = `${domNode.node.x + frame.panX}px`;
   domNode.style.top = `${domNode.node.y + frame.panY}px`;
+}
+
+function augmentDomEdgeNote(domEdge, note) {
+  const domNote = document.createElement('div');
+  domNote.classList.add('edge-note');
+  domNote.textContent = note;
+  domEdge.appendChild(domNote);
+  domEdge.domNote = domNote;
 }
 
 function updateDomEdge(domEdge) {
@@ -156,28 +193,25 @@ function updateDomEdge(domEdge) {
   if (domEdge.domNote) {
     const { domNote } = domEdge;
     domNote.innerHTML = edge.note;
+  } else if (edge.note !== undefined) {
+    augmentDomEdgeNote(domEdge, edge.note);
   }
 }
 
-function makeDomEdge(graph, edge) {
+function makeDomEdge(frame, graph, edge) {
   const domEdge = document.createElement('div');
+  domEdge.frame = frame;
   domEdge.graph = graph;
   domEdge.edge = edge;
   domEdge.id = edge.id;
-  if (edge.note) {
-    const domNote = document.createElement('div');
-    domNote.classList.add('edge-note');
-    domNote.textContent = edge.note;
-    domEdge.appendChild(domNote);
-    domEdge.domNote = domNote;
-  }
+  if (edge.note) augmentDomEdgeNote(domEdge, edge.note);
   return domEdge;
 }
 
 function makeDomEdges(frame, graph) {
   for (let i = 0; i < graph.edges.length; i += 1) {
     const edge = graph.edges[i];
-    const domEdge = makeDomEdge(graph, edge);
+    const domEdge = makeDomEdge(frame, graph, edge);
     frame.insertBefore(domEdge, frame.firstChild);
     updateDomEdge(domEdge);
   }
@@ -196,12 +230,15 @@ function updateFrame(frame) {
     const node = frame.graph.nodes[i];
     let domNode = document.getElementById(node.id);
     if (domNode) {
-      updateDomNode(frame, frame.graph, domNode);
+      // update content of existing node
+      updateDomNode(domNode);
     } else {
+      // create new node that are in the graph
       domNode = makeDomNode(frame, frame.graph, node);
       frame.appendChild(domNode);
     }
   }
+  // delete nodes that are not in the graph
   for (let i = 0; i < domNodes.length; i += 1) {
     const domNode = domNodes[i];
     if (frame.graph.nodes.includes(domNode.node) === false) { domNode.remove(); }
@@ -264,6 +301,18 @@ function initFrame(frame) {
     if (ghostEdge) ghostEdge.remove();
   });
 
+  document.addEventListener('keyup', (event) => {
+    // console.log('keyup');
+    if (frame.selected && event.key === 'Delete') {
+      if (frame.selected.classList.contains('node')) {
+        removeNode(frame.graph, frame.selected.id);
+      } else if (frame.selected.classList.contains('edge')) {
+        removeEdge(frame.graph, frame.selected.id);
+      }
+      updateFrame(frame);
+    }
+  });
+
   frame.addEventListener('mousedown', (event) => {
     frame.dragBeginNode = event.target.closest('.node');
     if (frame.dragBeginNode && event.shiftKey) {
@@ -272,7 +321,6 @@ function initFrame(frame) {
       ghostEdge.classList.add('ghost-edge');
       frame.insertBefore(ghostEdge, frame.firstChild);
     }
-    event.preventDefault();
   });
 
   frame.addEventListener('mousemove', (event) => {
@@ -339,15 +387,14 @@ function setEdgeNote(domEdge, note) {
 }
 
 function setNodeText(domNode, text) {
-  const nodeData = getNodeData(domNode.graph, domNode.id);
+  let nodeData = getNodeData(domNode.graph, domNode.id);
+  if (nodeData === undefined) nodeData = makeNodeData(domNode.graph, domNode.id);
   nodeData.text = text;
-  updateDomNode(domNode);
 }
 
 function setNodeImage(domNode, image) {
   const nodeData = getNodeData(domNode.graph, domNode.id);
   nodeData.image = image;
-  updateDomNode(domNode);
 }
 
 export {

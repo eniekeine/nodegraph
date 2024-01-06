@@ -15,7 +15,9 @@ function getEdgeWndTarget() {
 function updateEdgeWnd() {
   const formEdgeNote = document.querySelector('.form-edge-note');
   const domEdge = getEdgeWndTarget();
-  formEdgeNote.innerHTML = domEdge.edge.note;
+  const { note } = domEdge.edge;
+  console.log('updateEdgeWnd', note);
+  formEdgeNote.value = (note === undefined) ? '' : note;
 }
 
 function setNodeWndTarget(domNode) {
@@ -45,12 +47,12 @@ function updateNodeWnd(graph) {
 
 function onSelectionChanged(graph, domItem) {
   if (!domItem) {
-    // if domItem is null, it means user deselected by clicking on empty space.
+    // * User Selected Empty Space
     // console.log('deselected');
     document.querySelector('.edge-edit-wnd').classList.add('hidden');
     document.querySelector('.node-edit-wnd').classList.add('hidden');
   } else if (domItem.classList.contains('node')) {
-    // if domItem has 'node' class, user selected a node
+    // * User Selected Node
     // console.log(`node selected : ${domItem.id}`);
     setNodeWndTarget(domItem);
     updateNodeWnd(graph);
@@ -58,7 +60,7 @@ function onSelectionChanged(graph, domItem) {
     document.querySelector('.node-edit-wnd').classList.remove('hidden');
     playBlip();
   } else if (domItem.classList.contains('edge')) {
-    // if domItem has 'edge' class, user selected an edge
+    // * User Selected Edge
     // console.log(`edge selected : ${domItem.id}`);
     setEdgeWndTarget(domItem);
     updateEdgeWnd();
@@ -76,7 +78,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const domEdge = elemEdgeEditWnd.target;
     if (domEdge) {
       if (event.target === document.querySelector('.form-edge-note')) {
-        setEdgeNote(domEdge, event.target.value);
+        console.log(event.target.value);
+        nodegraph.setEdgeNote(domEdge, event.target.value);
+        nodegraph.updateFrame(frame);
       }
     }
   });
@@ -85,9 +89,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const domNode = elemNodeEditWnd.target;
     if (domNode) {
       if (event.target === document.querySelector('.form-node-text')) {
-        nodegraph.setNodeText(domNode, event.target.value);
+        const nodeText = event.target.value;
+        nodegraph.setNodeText(domNode, nodeText);
+        nodegraph.updateFrame(frame);
       } else if (event.target === document.querySelector('.form-node-image')) {
-        nodegraph.setNodeImage(domNode, event.target.value);
+        const nodeImgSrc = event.target.value;
+        nodegraph.setNodeImage(domNode, nodeImgSrc);
+        nodegraph.updateFrame(frame);
       }
     }
   });
@@ -111,10 +119,11 @@ document.addEventListener('DOMContentLoaded', () => {
         a.download = 'graph.json';
         a.click();
       });
-
+      const fileInput = document.getElementById('file-input');
       document.querySelector('.btn-upload').addEventListener('click', () => {
-        const fileInput = document.getElementById('file-input');
         fileInput.click();
+      });
+      fileInput.addEventListener('change', (event) => {
         const file = fileInput.files[0];
 
         if (!file) {
@@ -126,7 +135,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         reader.onload = (event) => {
           try {
-            nodegraph.setGraph(JSON.parse(event.target.result));
+            const parsed = JSON.parse(event.target.result);
+            console.log(parsed);
+            nodegraph.setGraph(frame, parsed);
           } catch (e) {
             console.error('Error parsing JSON!', e);
           }
