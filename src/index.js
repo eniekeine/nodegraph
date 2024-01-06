@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   });
-  fetch('/example/basic.json')
+  fetch('./example/basic.json')
     .then((response) => response.json())
     .then((graph) => {
       // initFrame must be called with frame element before any other calls
