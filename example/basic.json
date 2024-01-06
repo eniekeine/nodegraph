@@ -32,7 +32,7 @@
     },
     {
       "nodeid": "node-sentence",
-      "html": "<div class=\"node-content-text\">A text sentence.</div>"
+      "text": "A text sentence."
     },
     {
       "nodeid": "node-html",

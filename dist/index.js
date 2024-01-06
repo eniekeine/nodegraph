@@ -3,6 +3,9 @@
 
   /* eslint-disable no-param-reassign */
   // reutrns undefined if not found
+  function getNode(graph, nodeid) {
+    return graph.nodes.find((record) => record.id === nodeid);
+  }
 
   // returns undefined if not found
   function getNodeData(graph, nodeid) {
@@ -15,6 +18,11 @@
     };
     graph.nodeData.push(nodeData);
     return nodeData;
+  }
+
+  // returns undefined if not found
+  function getEdge(graph, edgeid) {
+    return graph.edges.find((record) => record.id === edgeid);
   }
 
   // returns undefined if not found
@@ -245,7 +253,7 @@
       if (domEdge) {
         updateDomEdge(domEdge);
       } else {
-        domEdge = makeDomEdge(frame.graph, edge);
+        domEdge = makeDomEdge(frame, frame.graph, edge);
         frame.insertBefore(domEdge, frame.firstChild);
         updateDomEdge(domEdge);
       }
@@ -273,8 +281,10 @@
           if (downDomNode) {
             let edge = findEdge(frame.graph, downDomNode.id, domNode.id);
             if (!edge) {
+              let id = 1;
+              while (getEdge(frame.graph, `e${id}`) !== undefined) id += 1;
               edge = {
-                id: `edge${frame.graph.edges.length}`,
+                id: `e${id}`,
                 fromto: [downDomNode.id, domNode.id],
               };
               frame.graph.edges.push(edge);
@@ -366,11 +376,16 @@
         return;
       }
 
-      frame.graph.nodes.push({
-        id: `node${frame.graph.nodes.length}`,
+      let id = 1;
+      while (getNode(frame.graph, `n${id}`) !== undefined) id += 1;
+
+      const newNode = {
+        id: `n${id}`,
         x: event.clientX - frame.getBoundingClientRect().left - frame.panX,
         y: event.clientY - frame.getBoundingClientRect().top - frame.panY,
-      });
+      };
+
+      frame.graph.nodes.push(newNode);
       updateFrame(frame);
     });
   }
@@ -448,6 +463,8 @@
     setGraph(dstFrame, parsed);
   }
 
+  let frame = null;
+
   function playBlip() {
     document.querySelector('.blipg3').play();
   }
@@ -478,7 +495,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    const frame = document.querySelector('.frame1');
+    frame = document.querySelector('.frame1');
     window.frame = frame;
     const elemEdgeEditWnd = document.querySelector('.edge-edit-wnd');
     elemEdgeEditWnd.addEventListener('keyup', (event) => {

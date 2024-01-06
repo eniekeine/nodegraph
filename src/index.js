@@ -2,6 +2,8 @@ import * as nodegraph from './nodegraph';
 import * as sidebar from './sidebar';
 import * as serialize from './serialize';
 
+let frame = null;
+
 function playBlip() {
   document.querySelector('.blipg3').play();
 }
@@ -32,7 +34,7 @@ function onSelectionChanged(graph, domItem) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  const frame = document.querySelector('.frame1');
+  frame = document.querySelector('.frame1');
   window.frame = frame;
   const elemEdgeEditWnd = document.querySelector('.edge-edit-wnd');
   elemEdgeEditWnd.addEventListener('keyup', (event) => {

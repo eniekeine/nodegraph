@@ -65,6 +65,6 @@
 .ghost-edge{
     position: absolute;
     background-color: none;
-    border-top: 4px solid #ffffff;
+    border-top: 4px dashed #eeeeee;
     transform-origin: left center;
 }
