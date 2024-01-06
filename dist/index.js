@@ -392,14 +392,6 @@
     nodeData.image = image;
   }
 
-  function playBlip() {
-    document.querySelector('.blipg3').play();
-  }
-
-  function setEdgeWndTarget(domEdge) {
-    document.querySelector('.edge-edit-wnd').target = domEdge;
-  }
-
   function getEdgeWndTarget() {
     return document.querySelector('.edge-edit-wnd').target;
   }
@@ -408,8 +400,12 @@
     const formEdgeNote = document.querySelector('.form-edge-note');
     const domEdge = getEdgeWndTarget();
     const { note } = domEdge.edge;
-    console.log('updateEdgeWnd', note);
+    // console.log('updateEdgeWnd', note);
     formEdgeNote.value = (note === undefined) ? '' : note;
+  }
+
+  function setEdgeWndTarget(domEdge) {
+    document.querySelector('.edge-edit-wnd').target = domEdge;
   }
 
   function setNodeWndTarget(domNode) {
@@ -435,6 +431,25 @@
     } else {
       formNodeImage.value = '';
     }
+  }
+
+  function download(graph) {
+    const content = JSON.stringify(graph, null, 2);
+    const a = document.createElement('a');
+    const file = new Blob([content], { type: 'text/plain' });
+    a.href = URL.createObjectURL(file);
+    a.download = 'graph.json';
+    a.click();
+  }
+
+  async function upload(dstFrame, file) {
+    const text = await file.text();
+    const parsed = JSON.parse(text);
+    setGraph(dstFrame, parsed);
+  }
+
+  function playBlip() {
+    document.querySelector('.blipg3').play();
   }
 
   function onSelectionChanged(graph, domItem) {
@@ -470,7 +485,7 @@
       const domEdge = elemEdgeEditWnd.target;
       if (domEdge) {
         if (event.target === document.querySelector('.form-edge-note')) {
-          console.log(event.target.value);
+          // console.log(event.target.value);
           setEdgeNote(domEdge, event.target.value);
           updateFrame(frame);
         }
@@ -497,49 +512,24 @@
         // initFrame must be called with frame element before any other calls
         initFrame(frame);
         setGraph(frame, graph);
-
         // optional. set callback function to be called when selection is changed.
         frame.callbackSelectionChanged = ((domItem) => {
           onSelectionChanged(graph, domItem);
         });
-
+        // * download button
         document.querySelector('.btn-download').addEventListener('click', () => {
-          const content = JSON.stringify(graph, null, 2);
-          const a = document.createElement('a');
-          const file = new Blob([content], { type: 'text/plain' });
-          a.href = URL.createObjectURL(file);
-          a.download = 'graph.json';
-          a.click();
+          download(graph);
         });
+        // * upload button
         const fileInput = document.getElementById('file-input');
         document.querySelector('.btn-upload').addEventListener('click', () => {
           fileInput.click();
         });
-        fileInput.addEventListener('change', (event) => {
+        // * hidden file upload form element
+        fileInput.addEventListener('change', () => {
           const file = fileInput.files[0];
-
-          if (!file) {
-            console.log('No file selected!');
-            return;
-          }
-
-          const reader = new FileReader();
-
-          reader.onload = (event) => {
-            try {
-              const parsed = JSON.parse(event.target.result);
-              console.log(parsed);
-              setGraph(frame, parsed);
-            } catch (e) {
-              console.error('Error parsing JSON!', e);
-            }
-          };
-
-          reader.onerror = function () {
-            console.error('Error reading file!');
-          };
-
-          reader.readAsText(file);
+          if (!file) return;
+          upload(frame, file);
         });
       });
   });
