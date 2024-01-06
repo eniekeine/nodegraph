@@ -105,10 +105,11 @@ function makeDomNodeContent(graph, node) {
     domNodeContent.innerHTML = nodedata.html;
     return domNodeContent;
   }
+  console.assert(false);
   return null;
 }
 
-function makeDomNode(frame, graph, node) {
+function makeDomNode(frame, node) {
   const {
     id, x, y, w, h,
   } = node;
@@ -120,9 +121,8 @@ function makeDomNode(frame, graph, node) {
   if (w) domNode.style.width = `${w}px`;
   if (h) domNode.style.height = `${h}px`;
   domNode.frame = frame;
-  domNode.graph = graph;
   domNode.node = node;
-  const domNodeContent = makeDomNodeContent(graph, node);
+  const domNodeContent = makeDomNodeContent(frame.graph, node);
   if (domNodeContent) domNode.appendChild(domNodeContent);
   return domNode;
 }
@@ -130,7 +130,7 @@ function makeDomNode(frame, graph, node) {
 function makeDomNodes(frame, graph) {
   for (let i = 0; i < graph.nodes.length; i += 1) {
     const node = graph.nodes[i];
-    const domNode = makeDomNode(frame, graph, node);
+    const domNode = makeDomNode(frame, node);
     frame.appendChild(domNode);
   }
 }
@@ -142,9 +142,9 @@ function getNodePosition(nodeid) {
 
 // apply what node data to domNode.
 function updateDomNode(domNode) {
-  const { graph, frame } = domNode;
+  const { frame } = domNode;
   // get node data
-  const nodeData = getNodeData(graph, domNode.id);
+  const nodeData = getNodeData(frame.graph, domNode.id);
   if (nodeData && nodeData.text && nodeData.text !== '') {
     // if node data has text property, display it
     const elemText = domNode.querySelector('.node-content-text');
@@ -181,7 +181,7 @@ function updateDomEdge(domEdge) {
   // radian angle of the edge rotation
   const alpha = Math.atan2(dy, dx);
   domEdge.classList.add('edge');
-  const edgeStyle = getEdgeStyle(domEdge.graph, edge.id);
+  const edgeStyle = getEdgeStyle(domEdge.frame.graph, edge.id);
   if (edgeStyle && edgeStyle.class !== undefined) {
     domEdge.classList.add(edgeStyle.class);
   }
@@ -198,10 +198,9 @@ function updateDomEdge(domEdge) {
   }
 }
 
-function makeDomEdge(frame, graph, edge) {
+function makeDomEdge(frame, edge) {
   const domEdge = document.createElement('div');
   domEdge.frame = frame;
-  domEdge.graph = graph;
   domEdge.edge = edge;
   domEdge.id = edge.id;
   if (edge.note) augmentDomEdgeNote(domEdge, edge.note);
@@ -211,7 +210,7 @@ function makeDomEdge(frame, graph, edge) {
 function makeDomEdges(frame, graph) {
   for (let i = 0; i < graph.edges.length; i += 1) {
     const edge = graph.edges[i];
-    const domEdge = makeDomEdge(frame, graph, edge);
+    const domEdge = makeDomEdge(frame, edge);
     frame.insertBefore(domEdge, frame.firstChild);
     updateDomEdge(domEdge);
   }
@@ -234,7 +233,7 @@ function updateFrame(frame) {
       updateDomNode(domNode);
     } else {
       // create new node that are in the graph
-      domNode = makeDomNode(frame, frame.graph, node);
+      domNode = makeDomNode(frame, node);
       frame.appendChild(domNode);
     }
   }
@@ -250,7 +249,7 @@ function updateFrame(frame) {
     if (domEdge) {
       updateDomEdge(domEdge);
     } else {
-      domEdge = makeDomEdge(frame, frame.graph, edge);
+      domEdge = makeDomEdge(frame, edge);
       frame.insertBefore(domEdge, frame.firstChild);
       updateDomEdge(domEdge);
     }
@@ -361,14 +360,12 @@ function initFrame(frame) {
   frame.addEventListener('dblclick', (event) => {
     const domNode = event.target.closest('.node');
     if (domNode) {
-      selectItem(frame, domNode);
       if (frame.callbackNodeDoubleClicked) frame.callbackNodeDoubleClicked(domNode);
       return;
     }
 
     const domEdge = event.target.closest('.edge');
     if (domEdge) {
-      selectItem(frame, domEdge);
       if (frame.callbackEdgeDoubleClicked) frame.callbackEdgeDoubleClicked(domEdge);
       return;
     }
@@ -394,13 +391,13 @@ function setEdgeNote(domEdge, note) {
 }
 
 function setNodeText(domNode, text) {
-  let nodeData = getNodeData(domNode.graph, domNode.id);
-  if (nodeData === undefined) nodeData = makeNodeData(domNode.graph, domNode.id);
+  let nodeData = getNodeData(domNode.frame.graph, domNode.id);
+  if (nodeData === undefined) nodeData = makeNodeData(domNode.frame.graph, domNode.id);
   nodeData.text = text;
 }
 
 function setNodeImage(domNode, image) {
-  const nodeData = getNodeData(domNode.graph, domNode.id);
+  const nodeData = getNodeData(domNode.frame.graph, domNode.id);
   nodeData.image = image;
 }
 

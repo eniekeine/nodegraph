@@ -27,80 +27,154 @@
     },
     {
       "id": "n4",
-      "x": 66,
-      "y": 512.0069427490234
+      "x": 69,
+      "y": 703.0069427490234
     },
     {
       "id": "n5",
-      "x": 419,
-      "y": 488.00694274902344
+      "x": 417,
+      "y": 530.0069427490234
     },
     {
       "id": "n6",
-      "x": 418,
-      "y": 578.0069427490234
+      "x": 419,
+      "y": 641.0069427490234
     },
     {
       "id": "n7",
       "x": 418,
-      "y": 666.0069427490234
+      "y": 756.0069427490234
     },
     {
       "id": "n8",
-      "x": 416,
-      "y": 758.0069427490234
+      "x": 414,
+      "y": 877.0069427490234
+    },
+    {
+      "id": "n9",
+      "x": 613,
+      "y": 237
+    },
+    {
+      "id": "n10",
+      "x": 615,
+      "y": 330
+    },
+    {
+      "id": "n11",
+      "x": 616,
+      "y": 430
+    },
+    {
+      "id": "n12",
+      "x": 616,
+      "y": 538
+    },
+    {
+      "id": "n13",
+      "x": 614,
+      "y": 657
+    },
+    {
+      "id": "n14",
+      "x": 616,
+      "y": 772
+    },
+    {
+      "id": "n15",
+      "x": 614,
+      "y": 892
+    },
+    {
+      "id": "n16",
+      "x": 72,
+      "y": 1075
+    },
+    {
+      "id": "n17",
+      "x": 411,
+      "y": 1080
+    },
+    {
+      "id": "n18",
+      "x": 630,
+      "y": 1065
+    },
+    {
+      "id": "n19",
+      "x": 411,
+      "y": 1229
     }
   ],
   "edges": [
     {
       "id": "e1",
-      "fromto": [
-        "node-root",
-        "node-hello"
-      ],
+      "fromto": ["node-root", "node-hello"],
       "note": "This is an edge."
     },
     {
       "id": "e2",
-      "fromto": [
-        "n1",
-        "n2"
-      ]
+      "fromto": ["n1", "n2"]
     },
     {
       "id": "e3",
-      "fromto": [
-        "n1",
-        "n3"
-      ]
+      "fromto": ["n1", "n3"]
     },
     {
       "id": "e4",
-      "fromto": [
-        "n4",
-        "n5"
-      ]
+      "fromto": ["n4", "n5"]
     },
     {
       "id": "e5",
-      "fromto": [
-        "n4",
-        "n6"
-      ]
+      "fromto": ["n4", "n6"]
     },
     {
       "id": "e6",
-      "fromto": [
-        "n4",
-        "n7"
-      ]
+      "fromto": ["n4", "n7"]
     },
     {
       "id": "e7",
-      "fromto": [
-        "n4",
-        "n8"
-      ]
+      "fromto": ["n4", "n8"]
+    },
+    {
+      "id": "e8",
+      "fromto": ["n2", "n9"]
+    },
+    {
+      "id": "e9",
+      "fromto": ["n3", "n10"]
+    },
+    {
+      "id": "e10",
+      "fromto": ["n3", "n11"]
+    },
+    {
+      "id": "e11",
+      "fromto": ["n5", "n12"]
+    },
+    {
+      "id": "e12",
+      "fromto": ["n6", "n13"]
+    },
+    {
+      "id": "e13",
+      "fromto": ["n7", "n14"]
+    },
+    {
+      "id": "e14",
+      "fromto": ["n8", "n15"]
+    },
+    {
+      "id": "e15",
+      "fromto": ["n16", "n17"]
+    },
+    {
+      "id": "e16",
+      "fromto": ["n17", "n18"]
+    },
+    {
+      "id": "e17",
+      "fromto": ["n16", "n19"]
     }
   ],
   "nodeData": [
@@ -138,7 +212,7 @@
     },
     {
       "nodeid": "n4",
-      "text": "Editing"
+      "text": "Editing Graph"
     },
     {
       "nodeid": "n5",
@@ -155,6 +229,51 @@
     {
       "nodeid": "n8",
       "text": "Delete Edge"
+    },
+    {
+      "nodeid": "n9",
+      "text": "Drag on empty space to pan around."
+    },
+    {
+      "nodeid": "n10",
+      "text": "1. Click a node to select.\n\n2. Selected node will get box highlight."
+    },
+    {
+      "nodeid": "n11",
+      "text": "1. Click an edge to select.\n\n2. Selected edge will turn red."
+    },
+    {
+      "nodeid": "n12",
+      "text": "Double click on empty space to insert a new node."
+    },
+    {
+      "nodeid": "n13",
+      "text": "1. Select a node.\n2. Press Deleted Key."
+    },
+    {
+      "nodeid": "n14",
+      "text": "1. While holding Shift Key\n2. Drag and Drop between two nodes that needs connection."
+    },
+    {
+      "nodeid": "n15",
+      "text": "1. Select an edge.\n2. Press Delete Key."
+    },
+    {
+      "nodeid": "n16",
+      "text": "Editing Data"
+    },
+    {
+      "nodeid": "n17",
+      "text": "Change Node Text"
+    },
+    {
+      "nodeid": "n18",
+      "text": "1. Select a node.\n2. From Sidebar,\n  - Node > Text\n  - Write content to text area",
+      "image": ""
+    },
+    {
+      "nodeid": "n19",
+      "text": "Change Edge Text"
     }
   ],
   "edgeStyles": [
