@@ -45,4 +45,28 @@ document.addEventListener('DOMContentLoaded', () => {
     .then((graph) => {
       nodegraph.setGraph(model.frame, graph);
     });
+  const resizer = document.querySelector('.right-sidebar-resizer');
+  resizer.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    const startX = e.clientX;
+    console.log('startX', startX);
+    const sidebarWidth = document.querySelector('.right-sidebar').offsetWidth;
+    console.log('sidebarWidth', sidebarWidth);
+    const mouseMoveHandler = (e) => {
+      e.preventDefault();
+      const delta = e.clientX - startX;
+      const newSidebarWidth = sidebarWidth - delta * 3;
+      // console.log('delta', delta);
+      if (newSidebarWidth >= 0) {
+        document.querySelector('.right-sidebar').style.width = `${newSidebarWidth}px`;
+      }
+    };
+    const mouseUpHandler = (e) => {
+      e.preventDefault();
+      document.removeEventListener('mousemove', mouseMoveHandler);
+      document.removeEventListener('mouseup', mouseUpHandler);
+    };
+    document.addEventListener('mousemove', mouseMoveHandler);
+    document.addEventListener('mouseup', mouseUpHandler);
+  });
 });

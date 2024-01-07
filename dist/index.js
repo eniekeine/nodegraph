@@ -271,6 +271,7 @@
     frame.callbackNodeClicked = null;
     frame.callbackEdgeClicked = null;
     frame.callbackSelectionChanged = null;
+    frame.mousedownTarget = null;
     frame.addEventListener('mouseup', (event) => {
       const domNode = event.target.closest('.node');
       const domEdge = event.target.closest('.edge');
@@ -318,6 +319,7 @@
     });
 
     frame.addEventListener('mousedown', (event) => {
+      frame.mousedownTarget = event.target;
       frame.dragBeginNode = event.target.closest('.node');
       if (frame.dragBeginNode && event.shiftKey) {
         const ghostEdge = document.createElement('div');
@@ -350,7 +352,7 @@
               ghostEdge.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
             }
           }
-        } else {
+        } else if (frame.mousedownTarget === frame) {
           // panning
           frame.panX += event.movementX;
           frame.panY += event.movementY;
@@ -551,6 +553,30 @@
       .then((graph) => {
         setGraph(model.frame, graph);
       });
+    const resizer = document.querySelector('.right-sidebar-resizer');
+    resizer.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      const startX = e.clientX;
+      console.log('startX', startX);
+      const sidebarWidth = document.querySelector('.right-sidebar').offsetWidth;
+      console.log('sidebarWidth', sidebarWidth);
+      const mouseMoveHandler = (e) => {
+        e.preventDefault();
+        const delta = e.clientX - startX;
+        const newSidebarWidth = sidebarWidth - delta * 3;
+        // console.log('delta', delta);
+        if (newSidebarWidth >= 0) {
+          document.querySelector('.right-sidebar').style.width = `${newSidebarWidth}px`;
+        }
+      };
+      const mouseUpHandler = (e) => {
+        e.preventDefault();
+        document.removeEventListener('mousemove', mouseMoveHandler);
+        document.removeEventListener('mouseup', mouseUpHandler);
+      };
+      document.addEventListener('mousemove', mouseMoveHandler);
+      document.addEventListener('mouseup', mouseUpHandler);
+    });
   });
 
 })();

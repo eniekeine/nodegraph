@@ -274,6 +274,7 @@
     frame.callbackNodeClicked = null;
     frame.callbackEdgeClicked = null;
     frame.callbackSelectionChanged = null;
+    frame.mousedownTarget = null;
     frame.addEventListener('mouseup', (event) => {
       const domNode = event.target.closest('.node');
       const domEdge = event.target.closest('.edge');
@@ -321,6 +322,7 @@
     });
 
     frame.addEventListener('mousedown', (event) => {
+      frame.mousedownTarget = event.target;
       frame.dragBeginNode = event.target.closest('.node');
       if (frame.dragBeginNode && event.shiftKey) {
         const ghostEdge = document.createElement('div');
@@ -353,7 +355,7 @@
               ghostEdge.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
             }
           }
-        } else {
+        } else if (frame.mousedownTarget === frame) {
           // panning
           frame.panX += event.movementX;
           frame.panY += event.movementY;
