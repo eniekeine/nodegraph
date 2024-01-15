@@ -88,7 +88,6 @@ body{
     min-width: 8px;
     background-color: #cf7f40;
     cursor: e-resize;
-    draggable: true;
 }
 .sidebar-wnd-form{
     display:flex;

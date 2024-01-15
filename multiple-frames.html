@@ -13,16 +13,16 @@
                 .then((response) => response.json())
                 .then((graph) => {
                     let frame1 = document.querySelector('.frame1');
-                    nodegraph.domgraph.initFrame(frame1);
-                    nodegraph.domgraph.setGraph(frame1, graph);
+                    nodegraph.initFrame(frame1);
+                    nodegraph.setGraph(frame1, graph);
                 });
             fetch('/example/animal.json')
-            .then((response)=>response.json())
-            .then((graph)=>{
-                let frame2 = document.querySelector('.frame2');
-                nodegraph.domgraph.initFrame(frame2);
-                nodegraph.domgraph.setGraph(frame2, graph);
-            });
+                .then((response)=>response.json())
+                .then((graph)=>{
+                    let frame2 = document.querySelector('.frame2');
+                    nodegraph.initFrame(frame2);
+                    nodegraph.setGraph(frame2, graph);
+                });
         });
     </script>
 </head>

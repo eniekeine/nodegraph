@@ -42,6 +42,7 @@ function removeEdge(graph, edgeId) {
 
 function removeNode(graph, nodeId) {
   graph.nodes.splice(graph.nodes.findIndex((record) => record.id === nodeId), 1);
+  graph.nodeData.splice(graph.nodes.findIndex((record) => record.nodeid === nodeId), 1);
   const edges = findEdgesByNode(graph, nodeId);
   for (let i = 0; i < edges.length; i += 1) {
     removeEdge(graph, edges[i].id);
@@ -262,6 +263,14 @@ function updateFrame(frame) {
   }
 }
 
+function addDomNode(frame, x, y) {
+  let id = 1;
+  while (getNode(frame.graph, `n${id}`) !== undefined) id += 1;
+  const newNode = { id: `n${id}`, x, y };
+  frame.graph.nodes.push(newNode);
+  return newNode;
+}
+
 function initFrame(frame) {
   frame.panX = 0;
   frame.panY = 0;
@@ -274,7 +283,20 @@ function initFrame(frame) {
   frame.addEventListener('mouseup', (event) => {
     const domNode = event.target.closest('.node');
     const domEdge = event.target.closest('.edge');
-    if (event.shiftKey) {
+    if (event.ctrlKey) {
+      if (frame.dragBeginNode && frame.dragBeginNode !== domNode) {
+        const x = event.clientX - frame.getBoundingClientRect().left - frame.panX;
+        const y = event.clientY - frame.getBoundingClientRect().top - frame.panY;
+        const newNode = addDomNode(frame, x, y);
+        const srcNodeData = getNodeData(frame.graph, frame.dragBeginNode.node.id);
+        if (srcNodeData) {
+          const dstNodeData = makeNodeData(frame.graph, newNode.id);
+          dstNodeData.text = srcNodeData.text;
+          dstNodeData.image = srcNodeData.image;
+          updateFrame(frame);
+        }
+      }
+    } else if (event.shiftKey) {
       if (domNode && frame.dragBeginNode && frame.dragBeginNode !== domNode) {
         const downDomNode = frame.dragBeginNode;
         if (downDomNode) {
@@ -303,6 +325,7 @@ function initFrame(frame) {
     frame.dragBeginNode = null;
     const ghostEdge = frame.querySelector('.ghost-edge');
     if (ghostEdge) ghostEdge.remove();
+    frame.style.cursor = 'default';
   });
 
   document.addEventListener('keyup', (event) => {
@@ -325,6 +348,8 @@ function initFrame(frame) {
       ghostEdge.classList.add('hidden');
       ghostEdge.classList.add('ghost-edge');
       frame.insertBefore(ghostEdge, frame.firstChild);
+    } else if (frame.dragBeginNode && event.ctrlKey) {
+      frame.style.cursor = 'copy';
     }
   });
 
@@ -333,10 +358,7 @@ function initFrame(frame) {
       const domNode = frame.dragBeginNode;
       if (frame.dragBeginNode) {
         // console.log(`move node ${domNode.node.id}`);
-        if (!event.shiftKey) {
-          domNode.node.x += event.movementX;
-          domNode.node.y += event.movementY;
-        } else {
+        if (event.shiftKey) {
           const downDomNode = frame.dragBeginNode.closest('.node');
           if (downDomNode) {
             const frameRect = frame.getBoundingClientRect();
@@ -350,6 +372,9 @@ function initFrame(frame) {
             ghostEdge.style.width = `${Math.sqrt(dx * dx + dy * dy)}px`;
             ghostEdge.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
           }
+        } else if (event.ctrlKey) ; else {
+          domNode.node.x += event.movementX;
+          domNode.node.y += event.movementY;
         }
       } else if (frame.mousedownTarget === frame) {
         // panning
@@ -374,16 +399,9 @@ function initFrame(frame) {
       return;
     }
 
-    let id = 1;
-    while (getNode(frame.graph, `n${id}`) !== undefined) id += 1;
-
-    const newNode = {
-      id: `n${id}`,
-      x: event.clientX - frame.getBoundingClientRect().left - frame.panX,
-      y: event.clientY - frame.getBoundingClientRect().top - frame.panY,
-    };
-
-    frame.graph.nodes.push(newNode);
+    const x = event.clientX - frame.getBoundingClientRect().left - frame.panX;
+    const y = event.clientY - frame.getBoundingClientRect().top - frame.panY;
+    addDomNode(frame, x, y);
     updateFrame(frame);
   });
 }

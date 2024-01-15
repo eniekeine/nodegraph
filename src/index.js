@@ -32,6 +32,9 @@ function onSelectionChanged(graph, domItem) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // expose global reference for debugging
+  window.model = model;
+  // set model.frame as frame DOM element
   model.frame = document.querySelector('.frame1');
   // initFrame must be called with frame element before any other calls
   nodegraph.initFrame(model.frame);
@@ -49,9 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
   resizer.addEventListener('mousedown', (e) => {
     e.preventDefault();
     const startX = e.clientX;
-    console.log('startX', startX);
+    // console.log('startX', startX);
     const sidebarWidth = document.querySelector('.right-sidebar').offsetWidth;
-    console.log('sidebarWidth', sidebarWidth);
+    // console.log('sidebarWidth', sidebarWidth);
     const mouseMoveHandler = (e) => {
       e.preventDefault();
       const delta = e.clientX - startX;

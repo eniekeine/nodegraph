@@ -27,8 +27,8 @@
     },
     {
       "id": "n4",
-      "x": 69,
-      "y": 703.0069427490234
+      "x": 82,
+      "y": 718.0069427490234
     },
     {
       "id": "n5",
@@ -78,7 +78,7 @@
     {
       "id": "n14",
       "x": 616,
-      "y": 772
+      "y": 769
     },
     {
       "id": "n15",
@@ -87,23 +87,38 @@
     },
     {
       "id": "n16",
-      "x": 72,
-      "y": 1075
+      "x": 57,
+      "y": 1270
     },
     {
       "id": "n17",
-      "x": 411,
-      "y": 1080
+      "x": 421,
+      "y": 1272
     },
     {
       "id": "n18",
-      "x": 630,
-      "y": 1065
+      "x": 657,
+      "y": 1296
     },
     {
       "id": "n19",
       "x": 411,
-      "y": 1229
+      "y": 1465
+    },
+    {
+      "id": "n20",
+      "x": 633,
+      "y": 1524
+    },
+    {
+      "id": "n21",
+      "x": 418,
+      "y": 1002
+    },
+    {
+      "id": "n22",
+      "x": 617,
+      "y": 1013
     }
   ],
   "edges": [
@@ -175,6 +190,18 @@
     {
       "id": "e17",
       "fromto": ["n16", "n19"]
+    },
+    {
+      "id": "e18",
+      "fromto": ["n19", "n20"]
+    },
+    {
+      "id": "e19",
+      "fromto": ["n4", "n21"]
+    },
+    {
+      "id": "e20",
+      "fromto": ["n21", "n22"]
     }
   ],
   "nodeData": [
@@ -274,6 +301,18 @@
     {
       "nodeid": "n19",
       "text": "Change Edge Text"
+    },
+    {
+      "nodeid": "n20",
+      "text": "1. Select an edge.\n\n2. From Sidebar,\n  - Edge > Note\n  - Write content to text area"
+    },
+    {
+      "nodeid": "n21",
+      "text": "Copy Node"
+    },
+    {
+      "nodeid": "n22",
+      "text": "1. While holding Ctrl Key\n\n2. Drag and Drop the node to be copied.\n\n3. The new Node will appear at the cursor position."
     }
   ],
   "edgeStyles": [
