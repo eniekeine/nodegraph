@@ -156,8 +156,8 @@
     await Promise.all(promises);
   }
 
-  function getNodePosition(nodeid) {
-    const node = document.getElementById(nodeid);
+  function getNodePosition(frame, nodeid) {
+    const node = frame.querySelector(`#${nodeid}`);
     return getCenterPosition(node);
   }
 
@@ -183,10 +183,10 @@
     domEdge.domNote = domNote;
   }
 
-  function updateDomEdge(domEdge) {
+  function updateDomEdge(frame, domEdge) {
     const { edge, style } = domEdge;
-    const pos0 = getNodePosition(edge.fromto[0]);
-    const pos1 = getNodePosition(edge.fromto[1]);
+    const pos0 = getNodePosition(frame, edge.fromto[0]);
+    const pos1 = getNodePosition(frame, edge.fromto[1]);
     const dx = pos1.x - pos0.x;
     const dy = pos1.y - pos0.y;
     // length of the edge
@@ -225,7 +225,7 @@
       const edge = graph.edges[i];
       const domEdge = makeDomEdge(frame, edge);
       frame.insertBefore(domEdge, frame.firstChild);
-      updateDomEdge(domEdge);
+      updateDomEdge(frame, domEdge);
     }
   }
 
@@ -269,11 +269,11 @@
       const edge = frame.graph.edges[i];
       let domEdge = frame.querySelector(`#${edge.id}`);
       if (domEdge) {
-        updateDomEdge(domEdge);
+        updateDomEdge(frame, domEdge);
       } else {
         domEdge = makeDomEdge(frame, edge);
         frame.insertBefore(domEdge, frame.firstChild);
-        updateDomEdge(domEdge);
+        updateDomEdge(frame, domEdge);
       }
     }
     for (let i = 0; i < domEdges.length; i += 1) {

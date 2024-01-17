@@ -107,8 +107,8 @@
     },
     {
       "id": "n20",
-      "x": 621,
-      "y": 1604
+      "x": 644,
+      "y": 1611
     },
     {
       "id": "n21",
@@ -117,8 +117,8 @@
     },
     {
       "id": "n22",
-      "x": 616,
-      "y": 904
+      "x": 626,
+      "y": 933
     },
     {
       "id": "n23",
@@ -147,8 +147,18 @@
     },
     {
       "id": "n28",
-      "x": 1083,
-      "y": 1375
+      "x": 1128,
+      "y": 1353
+    },
+    {
+      "id": "n29",
+      "x": 1209,
+      "y": 1735
+    },
+    {
+      "id": "n30",
+      "x": 1215,
+      "y": 1881
     }
   ],
   "edges": [
@@ -277,7 +287,8 @@
       "fromto": [
         "n19",
         "n20"
-      ]
+      ],
+      "note": ""
     },
     {
       "id": "e19",
@@ -334,6 +345,22 @@
         "n27",
         "n28"
       ]
+    },
+    {
+      "id": "e27",
+      "fromto": [
+        "n20",
+        "n29"
+      ],
+      "note": "Edge note appears like this."
+    },
+    {
+      "id": "e28",
+      "fromto": [
+        "n30",
+        "n20"
+      ],
+      "note": "Depending on the direction of the edge,\n<br>\nNote can be flipped."
     }
   ],
   "nodeData": [
@@ -455,15 +482,6 @@
     {
       "nodeid": "n26",
       "text": "Node as Markdown"
-    },
-    {
-      "nodeid": "n27",
-      "text": "1. Select a node.\n2. From Sidebar,\n  - Node > Markdown\n  - Write Markdown Document to be rendered."
-    },
-    {
-      "nodeid": "n28",
-      "text": "",
-      "markdown": "## Header\n\nParagraph\n\n- bulleting\n- bulleting\n\n1. numbering\n2. numbering\n\n[Hyperlink](https://www.google.com)"
     }
   ],
   "edgeStyles": [
