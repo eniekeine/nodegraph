@@ -19,9 +19,7 @@
   }
 
   function makeNodeData(graph, nodeid) {
-    const nodeData = {
-      nodeid,
-    };
+    const nodeData = { nodeid };
     graph.nodeData.push(nodeData);
     return nodeData;
   }
@@ -240,21 +238,26 @@
 
   async function updateFrame(frame) {
     const domNodes = frame.querySelectorAll('.node');
+    const promises = [];
     for (let i = 0; i < frame.graph.nodes.length; i += 1) {
       const node = frame.graph.nodes[i];
-      let domNode = document.getElementById(node.id);
+      const domNode = frame.querySelector(`#${node.id}`);
       if (domNode) {
-        // update content of existing node
+        // update position of existing node
         updateDomNode(domNode, true, false);
       } else {
         // create new node that are in the graph
-        domNode = await makeDomNode(frame, node);
-        frame.appendChild(domNode);
+        promises.push(makeDomNode(frame, node).then((newDomNode) => {
+          frame.appendChild(newDomNode);
+        }));
       }
     }
+    await Promise.all(promises);
+    // update content of the existing nodes
     state.nodeNeedContentUpdate.forEach((domNode) => {
       updateDomNode(domNode, false, true);
     });
+    // clear the update list
     state.nodeNeedContentUpdate = [];
     // delete nodes that are not in the graph
     for (let i = 0; i < domNodes.length; i += 1) {
@@ -264,7 +267,7 @@
     const domEdges = frame.querySelectorAll('.edge');
     for (let i = 0; i < frame.graph.edges.length; i += 1) {
       const edge = frame.graph.edges[i];
-      let domEdge = document.getElementById(edge.id);
+      let domEdge = frame.querySelector(`#${edge.id}`);
       if (domEdge) {
         updateDomEdge(domEdge);
       } else {
