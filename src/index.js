@@ -31,23 +31,7 @@ function onSelectionChanged(graph, domItem) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  // expose global reference for debugging
-  window.model = model;
-  // set model.frame as frame DOM element
-  model.frame = document.querySelector('.frame1');
-  // initFrame must be called with frame element before any other calls
-  nodegraph.initFrame(model.frame);
-  // optional. set callback function to be called when selection is changed.
-  model.frame.callbackSelectionChanged = ((domItem) => {
-    onSelectionChanged(model.frame.graph, domItem);
-  });
-  sidebar.initSidebar();
-  fetch('./example/basic.json')
-    .then((response) => response.json())
-    .then((graph) => {
-      nodegraph.setGraph(model.frame, graph);
-    });
+function initResizer() {
   const resizer = document.querySelector('.right-sidebar-resizer');
   resizer.addEventListener('mousedown', (e) => {
     e.preventDefault();
@@ -72,4 +56,27 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('mousemove', mouseMoveHandler);
     document.addEventListener('mouseup', mouseUpHandler);
   });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  // expose global reference for debugging
+  window.model = model;
+  // set model.frame as frame DOM element
+  model.frame = document.querySelector('.frame1');
+  // initFrame must be called with frame element before any other calls
+  nodegraph.initFrame(model.frame);
+  // optional. set callback function to be called when selection is changed.
+  model.frame.callbackSelectionChanged = (domItem) => {
+    onSelectionChanged(model.frame.graph, domItem);
+  };
+  // initialize DOM sidebar
+  sidebar.initSidebar();
+  // load basic.json graph file and display.
+  fetch('./example/basic.json')
+    .then((response) => response.json())
+    .then((graph) => {
+      nodegraph.setGraph(model.frame, graph);
+    });
+  // initialize DOM sidebar resizer
+  initResizer();
 });

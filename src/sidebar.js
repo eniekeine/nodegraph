@@ -31,6 +31,7 @@ function updateNodeWnd(graph) {
   const nodeData = nodegraph.getNodeData(graph, domNode.id);
   const formNodeNote = document.querySelector('.form-node-text');
   const formNodeImage = document.querySelector('.form-node-image');
+  const formNodeMarkdown = document.querySelector('.form-node-markdown');
   if (nodeData && nodeData.text) {
     formNodeNote.value = nodeData.text;
   } else {
@@ -40,6 +41,11 @@ function updateNodeWnd(graph) {
     formNodeImage.value = nodeData.image;
   } else {
     formNodeImage.value = '';
+  }
+  if (nodeData && nodeData.markdown) {
+    formNodeMarkdown.value = nodeData.markdown;
+  } else {
+    formNodeMarkdown.value = '';
   }
 }
 
@@ -67,8 +73,17 @@ function initSidebar() {
         const nodeImgSrc = event.target.value;
         nodegraph.setNodeImage(domNode, nodeImgSrc);
         nodegraph.updateFrame(model.frame);
+      } else if (event.target === document.querySelector('.form-node-markdown')) {
+        const nodeMarkdwon = event.target.value;
+        nodegraph.setNodeMarkDown(domNode, nodeMarkdwon);
+        nodegraph.updateFrame(model.frame);
       }
     }
+  });
+  // * new button
+  document.querySelector('.btn-new-graph').addEventListener('click', () => {
+    nodegraph.setGraph(model.frame, nodegraph.newGraph());
+    nodegraph.updateFrame(model.frame);
   });
   // * download button
   document.querySelector('.btn-download').addEventListener('click', () => {

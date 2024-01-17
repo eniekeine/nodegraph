@@ -15,6 +15,17 @@
     min-width: 36px;
     min-height: 36px;
 }
+.node-content-markdown {
+    width:max-content;
+    min-width: 32px;
+    min-height: 32px;
+    background-color: #1d6e21;
+    border-radius: 8px;
+    border: 2px solid #ffffff;
+    display:inline-flex;
+    flex-direction: column;
+    padding: 1em;   
+}
 .node-content-text {
     width:max-content;
     min-width: 32px;
