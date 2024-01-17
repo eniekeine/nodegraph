@@ -432,14 +432,14 @@ function setNodeText(domNode, text) {
 }
 
 function setNodeImage(domNode, image) {
-  const nodeData = getNodeData(domNode.frame.graph, domNode.id);
+  let nodeData = getNodeData(domNode.frame.graph, domNode.id);
   if (nodeData === undefined) nodeData = makeNodeData(domNode.frame.graph, domNode.id);
   nodeData.image = image;
   state.nodeNeedContentUpdate.push(domNode);
 }
 
 function setNodeMarkDown(domNode, markdown) {
-  const nodeData = getNodeData(domNode.frame.graph, domNode.id);
+  let nodeData = getNodeData(domNode.frame.graph, domNode.id);
   if (nodeData === undefined) nodeData = makeNodeData(domNode.frame.graph, domNode.id);
   nodeData.markdown = markdown;
   state.nodeNeedContentUpdate.push(domNode);
