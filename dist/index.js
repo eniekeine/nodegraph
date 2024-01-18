@@ -557,8 +557,10 @@
     });
     // * new button
     document.querySelector('.btn-new-graph').addEventListener('click', () => {
-      setGraph(model.frame, newGraph());
-      updateFrame(model.frame);
+      if (confirm('Starting a new graph will remove the current graph. Are you sure?')) {
+        setGraph(model.frame, newGraph());
+        updateFrame(model.frame);
+      }
     });
     // * download button
     document.querySelector('.btn-download').addEventListener('click', () => {

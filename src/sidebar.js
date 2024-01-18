@@ -82,8 +82,10 @@ function initSidebar() {
   });
   // * new button
   document.querySelector('.btn-new-graph').addEventListener('click', () => {
-    nodegraph.setGraph(model.frame, nodegraph.newGraph());
-    nodegraph.updateFrame(model.frame);
+    if (confirm('Starting a new graph will remove the current graph. Are you sure?')) {
+      nodegraph.setGraph(model.frame, nodegraph.newGraph());
+      nodegraph.updateFrame(model.frame);
+    }
   });
   // * download button
   document.querySelector('.btn-download').addEventListener('click', () => {
