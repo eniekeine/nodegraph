@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.0"
+   width="37.869999mm"
+   height="21.950001mm"
+   id="svg13"
+   sodipodi:docname="아이콘-서버.emf"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview15"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm" />
+  <defs
+     id="defs3">
+    <pattern
+       id="EMFhbasepattern"
+       patternUnits="userSpaceOnUse"
+       width="6"
+       height="6"
+       x="0"
+       y="0" />
+  </defs>
+  <path
+     style="fill:#f2f2f2;fill-rule:evenodd;fill-opacity:1;stroke:none;"
+     d="  M 20.041391,45.123131   C 20.041391,24.761718 35.282448,8.2805746 54.04375,8.2805746   C 72.845055,8.2805746 88.046109,24.761718 88.046109,45.123131   C 88.046109,65.484544 72.845055,81.965687 54.04375,81.965687   C 35.282448,81.965687 20.041391,65.484544 20.041391,45.123131   z "
+     id="path5" />
+  <path
+     style="fill:#f2f2f2;fill-rule:evenodd;fill-opacity:1;stroke:none;"
+     d="  M 47.243278,39.362731   C 47.243278,17.681227 63.404399,0.12000833 83.405787,0.12000833   C 103.36717,0.12000833 119.5683,17.681227 119.5683,39.362731   C 119.5683,61.044236 103.36717,78.605454 83.405787,78.605454   C 63.404399,78.605454 47.243278,61.044236 47.243278,39.362731   z "
+     id="path7" />
+  <path
+     style="fill:#f2f2f2;fill-rule:evenodd;fill-opacity:1;stroke:none;"
+     d="  M 85.245915,51.363564   C 85.245915,34.482393 97.886792,20.801443 113.48787,20.801443   C 129.08896,20.801443 141.72983,34.482393 141.72983,51.363564   C 141.72983,68.244735 129.08896,81.965687 113.48787,81.965687   C 97.886792,81.965687 85.245915,68.244735 85.245915,51.363564   z "
+     id="path9" />
+  <path
+     style="fill:#f2f2f2;fill-rule:evenodd;fill-opacity:1;stroke:none;"
+     d="  M 0.040002776,50.203484   C 0.040002776,34.042362 12.160844,20.961454 27.041876,20.961454   C 41.962912,20.961454 54.04375,34.042362 54.04375,50.203484   C 54.04375,66.364605 41.962912,79.445513 27.041876,79.445513   C 12.160844,79.445513 0.040002776,66.364605 0.040002776,50.203484   z "
+     id="path11" />
+</svg>

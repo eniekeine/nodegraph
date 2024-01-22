@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.0"
+   width="16.389999mm"
+   height="30.82mm"
+   id="svg15"
+   sodipodi:docname="아이콘-데스크톱-본체.emf"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview17"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm" />
+  <defs
+     id="defs3">
+    <pattern
+       id="EMFhbasepattern"
+       patternUnits="userSpaceOnUse"
+       width="6"
+       height="6"
+       x="0"
+       y="0" />
+  </defs>
+  <path
+     style="fill:#bdd7ee;fill-rule:evenodd;fill-opacity:1;stroke:none;"
+     d="  M 17.381206,17.421209   L 17.381206,128.92895   L 73.885127,128.92895   L 73.885127,17.421209   L 17.381206,17.421209   z "
+     id="path5" />
+  <path
+     style="fill:none;stroke:#ffffff;stroke-width:4.0002775px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:8;stroke-dasharray:none;stroke-opacity:1;"
+     d="  M 17.381206,17.421209   L 73.885127,17.421209   L 73.885127,128.92895   L 17.381206,128.92895   z "
+     id="path7" />
+  <path
+     style="fill:#7f7f7f;fill-rule:evenodd;fill-opacity:1;stroke:none;"
+     d="  M 22.721577,30.582122   L 22.721577,41.422874   L 68.564758,41.422874   L 68.564758,30.582122   L 22.721577,30.582122   z "
+     id="path9" />
+  <path
+     style="fill:#7f7f7f;fill-rule:evenodd;fill-opacity:1;stroke:none;"
+     d="  M 22.721577,49.083406   L 22.721577,59.744146   L 68.564758,59.744146   L 68.564758,49.083406   L 22.721577,49.083406   z "
+     id="path11" />
+  <path
+     style="fill:#7f7f7f;fill-rule:evenodd;fill-opacity:1;stroke:none;"
+     d="  M 39.722756,88.586147   C 39.722756,85.365923 42.382941,82.745742 45.643167,82.745742   C 48.903393,82.745742 51.563578,85.365923 51.563578,88.586147   C 51.563578,91.80637 48.903393,94.426552 45.643167,94.426552   C 42.382941,94.426552 39.722756,91.80637 39.722756,88.586147   z "
+     id="path13" />
+</svg>
