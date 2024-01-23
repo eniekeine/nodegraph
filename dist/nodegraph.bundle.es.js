@@ -366,10 +366,25 @@ function initFrame(frame) {
     }
   });
 
+  const checkDragMove = function (frame) {
+    console.log('-----');
+    console.log(frame.dragBeginNode);
+    console.log(frame.mousedownTarget);
+    console.log('a');
+    if (!frame.dragBeginNode) return false;
+    console.log('b');
+    if (!frame.mousedownTarget) return false;
+    console.log('c');
+    if (frame.mousedownTarget.classList.contains('node-content-container')) return true;
+    console.log('d');
+    if (frame.mousedownTarget === frame.dragBeginNode) return true;
+    console.log('e');
+    return false;
+  };
   frame.addEventListener('mousemove', (event) => {
     if (event.buttons === 1) {
       const domNode = frame.dragBeginNode;
-      if (frame.dragBeginNode) {
+      if (checkDragMove(frame)) {
         // console.log(`move node ${domNode.node.id}`);
         if (event.shiftKey) {
           const downDomNode = frame.dragBeginNode.closest('.node');
@@ -396,7 +411,6 @@ function initFrame(frame) {
       }
       updateFrame(frame);
     }
-    event.preventDefault();
   });
 
   frame.addEventListener('dblclick', (event) => {
