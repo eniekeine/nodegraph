@@ -88,7 +88,7 @@ function selectItem(frame, item, reselect = false) {
   if (frame.callbackSelectionChanged) { frame.callbackSelectionChanged(item); }
 }
 
-function getCenterPosition(domNode) {
+function getDomNodeCenterPosition(domNode) {
   // getBoundingClinetRect returns coordinate in client area(full window except for the title bar)
   // so we need to subtract the coordinate of the parent element
   // to get the coordinate within the parent element
@@ -100,7 +100,7 @@ function getCenterPosition(domNode) {
   };
 }
 
-function getNodeRect(domNode) {
+function getDomNodeRect(domNode) {
   const parentRect = domNode.parentElement.getBoundingClientRect();
   const rect = domNode.getBoundingClientRect();
   return new DOMRect(
@@ -176,7 +176,7 @@ async function makeDomNodes(frame, graph) {
 
 function getNodePosition(frame, nodeid) {
   const node = frame.querySelector(`#${nodeid}`);
-  return getCenterPosition(node);
+  return getDomNodeCenterPosition(node);
 }
 
 // apply what node data to domNode.
@@ -203,13 +203,12 @@ function augmentDomEdgeNote(domEdge, note) {
 
 function updateDomEdge(frame, domEdge) {
   const { edge, style } = domEdge;
-  const headerHeight = document.querySelector('.page-top').clientHeight;
   const pos0 = getNodePosition(frame, edge.fromto[0]);
   const pos1 = getNodePosition(frame, edge.fromto[1]);
   const domNode0 = frame.querySelector(`#${edge.fromto[0]}`);
   const domNode1 = frame.querySelector(`#${edge.fromto[1]}`);
-  const rect0 = getNodeRect(domNode0);
-  const rect1 = getNodeRect(domNode1);
+  const rect0 = getDomNodeRect(domNode0);
+  const rect1 = getDomNodeRect(domNode1);
   const A = box.boxIntersect(
     rect0.left,
     rect0.top,
@@ -226,12 +225,6 @@ function updateDomEdge(frame, domEdge) {
     pos0.x,
     pos0.y,
   );
-  // addTestPoint(frame, pos0.x - 5, pos0.y - 5);
-  // addTestPoint(frame, pos1.x - 5, pos1.y - 5);
-  // addTestPoint(frame, rect0.left, rect0.top);
-  // addTestPoint(frame, rect0.right, rect0.bottom);
-  // addTestPoint(frame, A[0], A[1] - headerHeight);
-  // addTestPoint(frame, B[0], B[1] - headerHeight);
   const dx = B[0] - A[0];
   const dy = B[1] - A[1];
   // length of the edge
@@ -434,7 +427,7 @@ function initFrame(frame) {
           if (downDomNode) {
             const frameRect = frame.getBoundingClientRect();
             const ghostEdge = frame.querySelector('.ghost-edge');
-            const pos0 = getCenterPosition(downDomNode);
+            const pos0 = getDomNodeCenterPosition(downDomNode);
             const dx = event.clientX - frameRect.left - pos0.x;
             const dy = event.clientY - frameRect.top - pos0.y;
             ghostEdge.classList.remove('hidden');

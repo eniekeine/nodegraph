@@ -12,23 +12,28 @@ function tellQuadrant(l, t, r, b, x, y) {
   const a2 = Math.atan2(db, dr);
   const a3 = Math.atan2(db, dl);
   const a = Math.atan2(dy, dx);
+  // top quadrent
   if (a0 <= a && a < a1) {
     // console.log('1');
     return 1;
   }
+  // right quadrent
   if (a1 <= a && a < a2) {
     // console.log('2');
     return 2;
   }
+  // bottom quadrent
   if (a2 <= a && a < a3) {
     // console.log('3');
     return 3;
   }
-  //   console.log('4');
+  // left quadrent
+  // console.log('4');
   return 4;
 }
 
 function boxIntersect(l, t, r, b, x, y) {
+  // console.log('boxIntersect');
   const cx = (l + r) / 2;
   const cy = (t + b) / 2;
   const dl = l - cx;
@@ -37,7 +42,6 @@ function boxIntersect(l, t, r, b, x, y) {
   const db = b - cy;
   const dx = x - cx;
   const dy = y - cy;
-  // console.log('boxIntersect');
   const quadrant = tellQuadrant(l, t, r, b, x, y);
   switch (quadrant) {
     case 1:
