@@ -75,6 +75,7 @@ function boxIntersect(l, t, r, b, x, y) {
     default:
       console.error('boxIntersect: invalid quadrant');
   }
+  throw new Error('boxINtersect: invalid quadrant');
 }
 
 export { tellQuadrant, boxIntersect };

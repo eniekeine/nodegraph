@@ -82,7 +82,7 @@ function initSidebar() {
   });
   // * new button
   document.querySelector('.btn-new-graph').addEventListener('click', () => {
-    if (confirm('Starting a new graph will remove the current graph. Are you sure?')) {
+    if (window.confirm('Starting a new graph will remove the current graph. Are you sure?')) {
       nodegraph.setGraph(model.frame, nodegraph.newGraph());
       nodegraph.updateFrame(model.frame);
     }

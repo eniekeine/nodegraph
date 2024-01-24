@@ -39,17 +39,17 @@ function initResizer() {
     // console.log('startX', startX);
     const sidebarWidth = document.querySelector('.right-sidebar').offsetWidth;
     // console.log('sidebarWidth', sidebarWidth);
-    const mouseMoveHandler = (e) => {
-      e.preventDefault();
-      const delta = e.clientX - startX;
+    const mouseMoveHandler = (e2) => {
+      e2.preventDefault();
+      const delta = e2.clientX - startX;
       const newSidebarWidth = sidebarWidth - delta * 3;
       // console.log('delta', delta);
       if (newSidebarWidth >= 0) {
         document.querySelector('.right-sidebar').style.width = `${newSidebarWidth}px`;
       }
     };
-    const mouseUpHandler = (e) => {
-      e.preventDefault();
+    const mouseUpHandler = (e2) => {
+      e2.preventDefault();
       document.removeEventListener('mousemove', mouseMoveHandler);
       document.removeEventListener('mouseup', mouseUpHandler);
     };

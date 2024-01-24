@@ -78,6 +78,7 @@ var nodegraph = (function (exports) {
       default:
         console.error('boxIntersect: invalid quadrant');
     }
+    throw new Error('boxINtersect: invalid quadrant');
   }
 
   const state = {
@@ -112,6 +113,17 @@ var nodegraph = (function (exports) {
       || (record.fromto[0] === toNodeId
       && record.fromto[1] === fromNodeId));
   }
+
+  // function addTestPoint(frame, x, y) {
+  //   const test = document.createElement('div');
+  //   test.style.position = 'absolute';
+  //   test.style.left = `${x}px`;
+  //   test.style.top = `${y}px`;
+  //   test.style.backgroundColor = 'red';
+  //   test.style.width = '10px';
+  //   test.style.height = '10px';
+  //   frame.appendChild(test);
+  // }
 
   async function makred(src) {
     const urlMarked = 'https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js';
@@ -400,6 +412,14 @@ var nodegraph = (function (exports) {
     return newNode;
   }
 
+  function checkDragMove(frame) {
+    if (!frame.dragBeginNode) return false;
+    if (!frame.mousedownTarget) return false;
+    if (frame.mousedownTarget.classList.contains('node-content-container')) return true;
+    if (frame.mousedownTarget === frame.dragBeginNode) return true;
+    return false;
+  }
+
   function initFrame(frame) {
     frame.panX = 0;
     frame.panY = 0;
@@ -481,14 +501,6 @@ var nodegraph = (function (exports) {
         frame.style.cursor = 'copy';
       }
     });
-
-    const checkDragMove = function (frame) {
-      if (!frame.dragBeginNode) return false;
-      if (!frame.mousedownTarget) return false;
-      if (frame.mousedownTarget.classList.contains('node-content-container')) return true;
-      if (frame.mousedownTarget === frame.dragBeginNode) return true;
-      return false;
-    };
     frame.addEventListener('mousemove', (event) => {
       if (event.buttons === 1) {
         const domNode = frame.dragBeginNode;

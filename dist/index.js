@@ -78,6 +78,7 @@
       default:
         console.error('boxIntersect: invalid quadrant');
     }
+    throw new Error('boxINtersect: invalid quadrant');
   }
 
   const state = {
@@ -112,6 +113,17 @@
       || (record.fromto[0] === toNodeId
       && record.fromto[1] === fromNodeId));
   }
+
+  // function addTestPoint(frame, x, y) {
+  //   const test = document.createElement('div');
+  //   test.style.position = 'absolute';
+  //   test.style.left = `${x}px`;
+  //   test.style.top = `${y}px`;
+  //   test.style.backgroundColor = 'red';
+  //   test.style.width = '10px';
+  //   test.style.height = '10px';
+  //   frame.appendChild(test);
+  // }
 
   async function makred(src) {
     const urlMarked = 'https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js';
@@ -400,6 +412,14 @@
     return newNode;
   }
 
+  function checkDragMove(frame) {
+    if (!frame.dragBeginNode) return false;
+    if (!frame.mousedownTarget) return false;
+    if (frame.mousedownTarget.classList.contains('node-content-container')) return true;
+    if (frame.mousedownTarget === frame.dragBeginNode) return true;
+    return false;
+  }
+
   function initFrame(frame) {
     frame.panX = 0;
     frame.panY = 0;
@@ -481,14 +501,6 @@
         frame.style.cursor = 'copy';
       }
     });
-
-    const checkDragMove = function (frame) {
-      if (!frame.dragBeginNode) return false;
-      if (!frame.mousedownTarget) return false;
-      if (frame.mousedownTarget.classList.contains('node-content-container')) return true;
-      if (frame.mousedownTarget === frame.dragBeginNode) return true;
-      return false;
-    };
     frame.addEventListener('mousemove', (event) => {
       if (event.buttons === 1) {
         const domNode = frame.dragBeginNode;
@@ -677,7 +689,7 @@
     });
     // * new button
     document.querySelector('.btn-new-graph').addEventListener('click', () => {
-      if (confirm('Starting a new graph will remove the current graph. Are you sure?')) {
+      if (window.confirm('Starting a new graph will remove the current graph. Are you sure?')) {
         setGraph(model.frame, newGraph());
         updateFrame(model.frame);
       }
@@ -736,17 +748,17 @@
       // console.log('startX', startX);
       const sidebarWidth = document.querySelector('.right-sidebar').offsetWidth;
       // console.log('sidebarWidth', sidebarWidth);
-      const mouseMoveHandler = (e) => {
-        e.preventDefault();
-        const delta = e.clientX - startX;
+      const mouseMoveHandler = (e2) => {
+        e2.preventDefault();
+        const delta = e2.clientX - startX;
         const newSidebarWidth = sidebarWidth - delta * 3;
         // console.log('delta', delta);
         if (newSidebarWidth >= 0) {
           document.querySelector('.right-sidebar').style.width = `${newSidebarWidth}px`;
         }
       };
-      const mouseUpHandler = (e) => {
-        e.preventDefault();
+      const mouseUpHandler = (e2) => {
+        e2.preventDefault();
         document.removeEventListener('mousemove', mouseMoveHandler);
         document.removeEventListener('mouseup', mouseUpHandler);
       };
