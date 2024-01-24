@@ -367,18 +367,12 @@ function initFrame(frame) {
   });
 
   const checkDragMove = function (frame) {
-    console.log('-----');
     console.log(frame.dragBeginNode);
     console.log(frame.mousedownTarget);
-    console.log('a');
     if (!frame.dragBeginNode) return false;
-    console.log('b');
     if (!frame.mousedownTarget) return false;
-    console.log('c');
     if (frame.mousedownTarget.classList.contains('node-content-container')) return true;
-    console.log('d');
     if (frame.mousedownTarget === frame.dragBeginNode) return true;
-    console.log('e');
     return false;
   };
   frame.addEventListener('mousemove', (event) => {
