@@ -1,6 +1,81 @@
 var nodegraph = (function (exports) {
   'use strict';
 
+  function tellQuadrant(l, t, r, b, x, y) {
+    const cx = (l + r) / 2;
+    const cy = (t + b) / 2;
+    const dl = l - cx;
+    const dr = r - cx;
+    const dt = t - cy;
+    const db = b - cy;
+    const dx = x - cx;
+    const dy = y - cy;
+    const a0 = Math.atan2(dt, dl);
+    const a1 = Math.atan2(dt, dr);
+    const a2 = Math.atan2(db, dr);
+    const a3 = Math.atan2(db, dl);
+    const a = Math.atan2(dy, dx);
+    if (a0 <= a && a < a1) {
+      // console.log('1');
+      return 1;
+    }
+    if (a1 <= a && a < a2) {
+      // console.log('2');
+      return 2;
+    }
+    if (a2 <= a && a < a3) {
+      // console.log('3');
+      return 3;
+    }
+    //   console.log('4');
+    return 4;
+  }
+
+  function boxIntersect(l, t, r, b, x, y) {
+    const cx = (l + r) / 2;
+    const cy = (t + b) / 2;
+    const dl = l - cx;
+    const dr = r - cx;
+    const dt = t - cy;
+    const db = b - cy;
+    const dx = x - cx;
+    const dy = y - cy;
+    // console.log('boxIntersect');
+    const quadrant = tellQuadrant(l, t, r, b, x, y);
+    switch (quadrant) {
+      case 1:
+      {
+        const p = dt / dy;
+        const ix = cx + dx * p;
+        const coord = [ix, t];
+        return coord;
+      }
+      case 2:
+      {
+        const p = dr / dx;
+        const iy = cy + dy * p;
+        const coord = [r, iy];
+        return coord;
+      }
+      case 3:
+      {
+        const p = db / dy;
+        const ix = cx + dx * p;
+        const coord = [ix, b];
+        return coord;
+      }
+      case 4:
+      {
+        const p = dl / dx;
+        const iy = cy + dy * p;
+        const coord = [l, iy];
+        return coord;
+      }
+      default:
+        console.error('boxIntersect: invalid quadrant');
+    }
+  }
+
   const state = {
     nodeNeedContentUpdate: [],
   };
@@ -88,6 +163,17 @@ var nodegraph = (function (exports) {
       x: (rect.left + rect.right) * 0.5 - parentRect.left,
       y: (rect.top + rect.bottom) * 0.5 - parentRect.top,
     };
+  }
+
+  function getNodeRect(domNode) {
+    const parentRect = domNode.parentElement.getBoundingClientRect();
+    const rect = domNode.getBoundingClientRect();
+    return new DOMRect(
+      rect.left - parentRect.left,
+      rect.top - parentRect.top,
+      rect.width,
+      rect.height,
+    );
   }
 
   async function makeDomNodeContent(graph, node) {
@@ -182,10 +268,37 @@ var nodegraph = (function (exports) {
 
   function updateDomEdge(frame, domEdge) {
     const { edge, style } = domEdge;
+    document.querySelector('.page-top').clientHeight;
     const pos0 = getNodePosition(frame, edge.fromto[0]);
     const pos1 = getNodePosition(frame, edge.fromto[1]);
-    const dx = pos1.x - pos0.x;
-    const dy = pos1.y - pos0.y;
+    const domNode0 = frame.querySelector(`#${edge.fromto[0]}`);
+    const domNode1 = frame.querySelector(`#${edge.fromto[1]}`);
+    const rect0 = getNodeRect(domNode0);
+    const rect1 = getNodeRect(domNode1);
+    const A = boxIntersect(
+      rect0.left,
+      rect0.top,
+      rect0.right,
+      rect0.bottom,
+      pos1.x,
+      pos1.y,
+    );
+    const B = boxIntersect(
+      rect1.left,
+      rect1.top,
+      rect1.right,
+      rect1.bottom,
+      pos0.x,
+      pos0.y,
+    );
+    // addTestPoint(frame, pos0.x - 5, pos0.y - 5);
+    // addTestPoint(frame, pos1.x - 5, pos1.y - 5);
+    // addTestPoint(frame, rect0.left, rect0.top);
+    // addTestPoint(frame, rect0.right, rect0.bottom);
+    // addTestPoint(frame, A[0], A[1] - headerHeight);
+    // addTestPoint(frame, B[0], B[1] - headerHeight);
+    const dx = B[0] - A[0];
+    const dy = B[1] - A[1];
     // length of the edge
     const l = dx * dx + dy * dy;
     // radian angle of the edge rotation
@@ -196,8 +309,8 @@ var nodegraph = (function (exports) {
       domEdge.classList.add(edgeStyle.class);
     }
     // edge origin is at pos0
-    style.left = `${pos0.x}px`;
-    style.top = `${pos0.y}px`;
+    style.left = `${A[0]}px`;
+    style.top = `${A[1]}px`;
     style.transform = `rotate(${alpha}rad)`;
     style.width = `${Math.sqrt(l)}px`;
     if (domEdge.domNote) {
@@ -370,8 +483,6 @@ var nodegraph = (function (exports) {
     });
 
     const checkDragMove = function (frame) {
-      console.log(frame.dragBeginNode);
-      console.log(frame.mousedownTarget);
       if (!frame.dragBeginNode) return false;
       if (!frame.mousedownTarget) return false;
       if (frame.mousedownTarget.classList.contains('node-content-container')) return true;
@@ -405,6 +516,7 @@ var nodegraph = (function (exports) {
           // panning
           frame.panX += event.movementX;
           frame.panY += event.movementY;
+          event.preventDefault();
         }
         updateFrame(frame);
       }
