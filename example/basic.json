@@ -7,18 +7,18 @@
     },
     {
       "id": "node-hello",
-      "x": 428,
-      "y": 99
+      "x": 411,
+      "y": 88
     },
     {
       "id": "n1",
-      "x": 56,
-      "y": 338.00694274902344
+      "x": 81,
+      "y": 276.00694274902344
     },
     {
       "id": "n2",
-      "x": 422,
-      "y": 240.00694274902344
+      "x": 430,
+      "y": 219.00694274902344
     },
     {
       "id": "n3",
@@ -32,8 +32,8 @@
     },
     {
       "id": "n5",
-      "x": 417,
-      "y": 530.0069427490234
+      "x": 421,
+      "y": 540.0069427490234
     },
     {
       "id": "n6",
@@ -53,22 +53,22 @@
     {
       "id": "n9",
       "x": 613,
-      "y": 237
+      "y": 209
     },
     {
       "id": "n10",
-      "x": 613,
-      "y": 322
+      "x": 614,
+      "y": 301
     },
     {
       "id": "n11",
       "x": 614,
-      "y": 427
+      "y": 420
     },
     {
       "id": "n12",
-      "x": 616,
-      "y": 538
+      "x": 614,
+      "y": 540
     },
     {
       "id": "n13",
@@ -77,13 +77,13 @@
     },
     {
       "id": "n14",
-      "x": 613,
-      "y": 722
+      "x": 614,
+      "y": 726
     },
     {
       "id": "n15",
-      "x": 611,
-      "y": 814
+      "x": 613,
+      "y": 829
     },
     {
       "id": "n16",
@@ -102,23 +102,23 @@
     },
     {
       "id": "n19",
-      "x": 399,
-      "y": 1638
+      "x": 401,
+      "y": 2157
     },
     {
       "id": "n20",
-      "x": 644,
-      "y": 1611
+      "x": 652,
+      "y": 2218
     },
     {
       "id": "n21",
-      "x": 421,
-      "y": 927
+      "x": 413,
+      "y": 929
     },
     {
       "id": "n22",
-      "x": 626,
-      "y": 933
+      "x": 614,
+      "y": 936
     },
     {
       "id": "n23",
@@ -137,8 +137,8 @@
     },
     {
       "id": "n26",
-      "x": 401,
-      "y": 1384
+      "x": 390,
+      "y": 1420
     },
     {
       "id": "n27",
@@ -147,18 +147,18 @@
     },
     {
       "id": "n28",
-      "x": 1128,
-      "y": 1353
+      "x": 937,
+      "y": 1395
     },
     {
       "id": "n29",
-      "x": 1209,
-      "y": 1735
+      "x": 1210,
+      "y": 2136
     },
     {
       "id": "n30",
-      "x": 1215,
-      "y": 1881
+      "x": 1205,
+      "y": 2462
     }
   ],
   "edges": [
@@ -360,7 +360,7 @@
         "n30",
         "n20"
       ],
-      "note": "Depending on the direction of the edge,\n<br>\nNote can be flipped."
+      "note": "Depending on the direction of the edge, Note can be flipped."
     }
   ],
   "nodeData": [
@@ -475,13 +475,39 @@
     },
     {
       "nodeid": "n25",
-      "image": "https://www.google.com/images/branding/googlelogo/1x/googlelogo_light_color_272x92dp.png",
+      "image": "img/icon/tablet.svg",
       "text": "",
       "markdown": ""
     },
     {
       "nodeid": "n26",
       "text": "Node as Markdown"
+    },
+    {
+      "nodeid": "n21",
+      "text": "Moving Node"
+    },
+    {
+      "nodeid": "n27",
+      "text": "1. Select a node.\n2. From Sidebar,\n  - Node > Markdown\n  - Write Markdown source.\n",
+      "markdown": ""
+    },
+    {
+      "nodeid": "n28",
+      "text": "",
+      "markdown": "## This Is a Header\n### This Is a Subheader\n\n- bulleting1\n- bulleting2\n\n1. numbering 1\n2. numbering 2\n\ncode can be encapsulated in ```\n\n```\n<html>\n<div></div>\n</html>\n```\n\nPut image like this\n\n![](img/icon/cloud.svg)"
+    },
+    {
+      "nodeid": "n29",
+      "text": "Edge goese here"
+    },
+    {
+      "nodeid": "n30",
+      "text": "Edge starts here"
+    },
+    {
+      "nodeid": "n22",
+      "text": "1. Put mouse pointer on the border of a node\n2. Start Dragging"
     }
   ],
   "edgeStyles": [

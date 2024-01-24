@@ -56,7 +56,7 @@ function initSidebar() {
     if (domEdge) {
       if (event.target === document.querySelector('.form-edge-note')) {
         // console.log(event.target.value);
-        nodegraph.setEdgeNote(domEdge, event.target.value);
+        nodegraph.setEdgeNote(model.frame, domEdge, event.target.value);
         nodegraph.updateFrame(model.frame);
       }
     }

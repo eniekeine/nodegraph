@@ -68,18 +68,34 @@
     transform-origin: left center;
 }
 .edge.selected{
-    border: 2px solid red;
+    border-top: 4px solid red;
 }
 .edge-note{
     display:flex;
+    position:absolute;
     justify-content: center;
     align-items: center;
     text-align: center;
     color: white;
+    left: 50%;
+    transform: translateX(-50%);
 }
 .ghost-edge{
     position: absolute;
     background-color: none;
     border-top: 4px dashed #eeeeee;
     transform-origin: left center;
+}
+.edge-tip-triangle{
+    position: absolute;
+    right: -5px; /* Position the triangle at the end of the line */
+    top: -7px; /* Adjust to align the triangle with the line */
+    width: 10px;
+    height: 10px;
+    background-color: white;
+    clip-path: polygon(
+        /* point 1 */ 100% 50%,
+        /* point 2 */ 0 0,
+        /* point 3 */ 0 100%
+    ); /* Shape of a right-pointing triangle */
 }

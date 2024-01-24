@@ -324,6 +324,9 @@
     domEdge.edge = edge;
     domEdge.id = edge.id;
     if (edge.note) augmentDomEdgeNote(domEdge, edge.note);
+    const edgeTip = document.createElement('div');
+    edgeTip.classList.add('edge-tip-triangle');
+    domEdge.appendChild(edgeTip);
     return domEdge;
   }
 
@@ -454,7 +457,7 @@
       frame.style.cursor = 'default';
     });
 
-    document.addEventListener('keyup', (event) => {
+    frame.addEventListener('keyup', (event) => {
       // console.log('keyup');
       if (frame.selected && event.key === 'Delete') {
         if (frame.selected.classList.contains('node')) {
@@ -539,10 +542,10 @@
     });
   }
 
-  function setEdgeNote(domEdge, note) {
+  function setEdgeNote(frame, domEdge, note) {
     const { edge } = domEdge;
     edge.note = note;
-    updateDomEdge(domEdge);
+    updateDomEdge(frame, domEdge);
   }
 
   function setNodeText(domNode, text) {
@@ -648,7 +651,7 @@
       if (domEdge) {
         if (event.target === document.querySelector('.form-edge-note')) {
           // console.log(event.target.value);
-          setEdgeNote(domEdge, event.target.value);
+          setEdgeNote(model.frame, domEdge, event.target.value);
           updateFrame(model.frame);
         }
       }
