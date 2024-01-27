@@ -1,84 +1,5 @@
-'use strict';
-
-function tellQuadrant(l, t, r, b, x, y) {
-  const cx = (l + r) / 2;
-  const cy = (t + b) / 2;
-  const dl = l - cx;
-  const dr = r - cx;
-  const dt = t - cy;
-  const db = b - cy;
-  const dx = x - cx;
-  const dy = y - cy;
-  const a0 = Math.atan2(dt, dl);
-  const a1 = Math.atan2(dt, dr);
-  const a2 = Math.atan2(db, dr);
-  const a3 = Math.atan2(db, dl);
-  const a = Math.atan2(dy, dx);
-  // top quadrent
-  if (a0 <= a && a < a1) {
-    // console.log('1');
-    return 1;
-  }
-  // right quadrent
-  if (a1 <= a && a < a2) {
-    // console.log('2');
-    return 2;
-  }
-  // bottom quadrent
-  if (a2 <= a && a < a3) {
-    // console.log('3');
-    return 3;
-  }
-  // left quadrent
-  // console.log('4');
-  return 4;
-}
-
-function boxIntersect(l, t, r, b, x, y) {
-  // console.log('boxIntersect');
-  const cx = (l + r) / 2;
-  const cy = (t + b) / 2;
-  const dl = l - cx;
-  const dr = r - cx;
-  const dt = t - cy;
-  const db = b - cy;
-  const dx = x - cx;
-  const dy = y - cy;
-  const quadrant = tellQuadrant(l, t, r, b, x, y);
-  switch (quadrant) {
-    case 1:
-    {
-      const p = dt / dy;
-      const ix = cx + dx * p;
-      const coord = [ix, t];
-      return coord;
-    }
-    case 2:
-    {
-      const p = dr / dx;
-      const iy = cy + dy * p;
-      const coord = [r, iy];
-      return coord;
-    }
-    case 3:
-    {
-      const p = db / dy;
-      const ix = cx + dx * p;
-      const coord = [ix, b];
-      return coord;
-    }
-    case 4:
-    {
-      const p = dl / dx;
-      const iy = cy + dy * p;
-      const coord = [l, iy];
-      return coord;
-    }
-    default:
-      console.error('boxIntersect: invalid quadrant');
-  }
-  throw new Error('boxINtersect: invalid quadrant');
-}
+import * as box from './box';
+import * as marked from './marked';
 
 const state = {
   nodeNeedContentUpdate: [],
@@ -123,12 +44,6 @@ function findEdge(graph, fromNodeId, toNodeId) {
 //   test.style.height = '10px';
 //   frame.appendChild(test);
 // }
-
-async function makred(src) {
-  const urlMarked = 'https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js';
-  const module = await import(urlMarked);
-  return module.parse(src);
-}
 
 function findEdgesByNode(graph, nodeId) {
   return graph.edges.filter((record) => record.fromto[0] === nodeId || record.fromto[1] === nodeId);
@@ -204,7 +119,7 @@ async function makeDomNodeContent(graph, node) {
   } else if (nodedata.markdown) {
     const domNodeContent = document.createElement('div');
     domNodeContent.classList.add('node-content-markdown');
-    const html = await makred(nodedata.markdown);
+    const html = marked.parse(nodedata.markdown);
     domNodeContent.innerHTML = html;
     domNodeContentContainer.appendChild(domNodeContent);
   } else if (nodedata.text) {
@@ -289,7 +204,7 @@ function updateDomEdge(frame, domEdge) {
   const domNode1 = frame.querySelector(`#${edge.fromto[1]}`);
   const rect0 = getDomNodeRect(domNode0);
   const rect1 = getDomNodeRect(domNode1);
-  const A = boxIntersect(
+  const A = box.boxIntersect(
     rect0.left,
     rect0.top,
     rect0.right,
@@ -297,7 +212,7 @@ function updateDomEdge(frame, domEdge) {
     pos1.x,
     pos1.y,
   );
-  const B = boxIntersect(
+  const B = box.boxIntersect(
     rect1.left,
     rect1.top,
     rect1.right,
@@ -519,7 +434,9 @@ function initFrame(frame) {
             ghostEdge.style.width = `${Math.sqrt(dx * dx + dy * dy)}px`;
             ghostEdge.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
           }
-        } else if (event.ctrlKey) ; else {
+        } else if (event.ctrlKey) {
+          // do nothing
+        } else {
           domNode.node.x += event.movementX;
           domNode.node.y += event.movementY;
         }
@@ -529,7 +446,7 @@ function initFrame(frame) {
         frame.panY += event.movementY;
         event.preventDefault();
       }
-      updateFrame(frame);
+      updateFrame(frame, true, false);
     }
   });
 
@@ -589,16 +506,18 @@ function newGraph() {
   };
 }
 
-exports.getEdge = getEdge;
-exports.getEdgeStyle = getEdgeStyle;
-exports.getNode = getNode;
-exports.getNodeData = getNodeData;
-exports.initFrame = initFrame;
-exports.newGraph = newGraph;
-exports.setEdgeNote = setEdgeNote;
-exports.setGraph = setGraph;
-exports.setNodeImage = setNodeImage;
-exports.setNodeMarkDown = setNodeMarkDown;
-exports.setNodeText = setNodeText;
-exports.updateDomNode = updateDomNode;
-exports.updateFrame = updateFrame;
+export {
+  initFrame,
+  updateFrame,
+  updateDomNode,
+  getNode,
+  getNodeData,
+  getEdge,
+  getEdgeStyle,
+  setGraph,
+  setEdgeNote,
+  setNodeText,
+  setNodeImage,
+  setNodeMarkDown,
+  newGraph,
+};

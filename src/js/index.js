@@ -1,3 +1,7 @@
+// src/index.js
+import '../css/index.css';
+// src/nodegraph.js
+import '../css/nodegraph.css';
 import * as nodegraph from './nodegraph';
 import * as sidebar from './sidebar';
 import model from './model';
@@ -72,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // initialize DOM sidebar
   sidebar.initSidebar();
   // load basic.json graph file and display.
-  fetch('./example/basic.json')
+  fetch('../example/basic.json')
     .then((response) => response.json())
     .then((graph) => {
       nodegraph.setGraph(model.frame, graph);
