@@ -2935,10 +2935,12 @@ var nodegraph = (function (exports) {
               ghostEdge.style.top = `${pos0.y}px`;
               ghostEdge.style.width = `${Math.sqrt(dx * dx + dy * dy)}px`;
               ghostEdge.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
+              event.preventDefault();
             }
           } else if (event.ctrlKey) ; else {
             domNode.node.x += event.movementX;
             domNode.node.y += event.movementY;
+            event.preventDefault();
           }
         } else if (frame.mousedownTarget === frame) {
           // panning

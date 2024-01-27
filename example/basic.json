@@ -164,202 +164,118 @@
   "edges": [
     {
       "id": "e1",
-      "fromto": [
-        "node-root",
-        "node-hello"
-      ],
+      "fromto": ["node-root", "node-hello"],
       "note": "This is an edge."
     },
     {
       "id": "e2",
-      "fromto": [
-        "n1",
-        "n2"
-      ]
+      "fromto": ["n1", "n2"]
     },
     {
       "id": "e3",
-      "fromto": [
-        "n1",
-        "n3"
-      ]
+      "fromto": ["n1", "n3"]
     },
     {
       "id": "e4",
-      "fromto": [
-        "n4",
-        "n5"
-      ]
+      "fromto": ["n4", "n5"]
     },
     {
       "id": "e5",
-      "fromto": [
-        "n4",
-        "n6"
-      ]
+      "fromto": ["n4", "n6"]
     },
     {
       "id": "e6",
-      "fromto": [
-        "n4",
-        "n7"
-      ]
+      "fromto": ["n4", "n7"]
     },
     {
       "id": "e7",
-      "fromto": [
-        "n4",
-        "n8"
-      ]
+      "fromto": ["n4", "n8"]
     },
     {
       "id": "e8",
-      "fromto": [
-        "n2",
-        "n9"
-      ]
+      "fromto": ["n2", "n9"]
     },
     {
       "id": "e9",
-      "fromto": [
-        "n3",
-        "n10"
-      ]
+      "fromto": ["n3", "n10"]
     },
     {
       "id": "e10",
-      "fromto": [
-        "n3",
-        "n11"
-      ]
+      "fromto": ["n3", "n11"]
     },
     {
       "id": "e11",
-      "fromto": [
-        "n5",
-        "n12"
-      ]
+      "fromto": ["n5", "n12"]
     },
     {
       "id": "e12",
-      "fromto": [
-        "n6",
-        "n13"
-      ]
+      "fromto": ["n6", "n13"]
     },
     {
       "id": "e13",
-      "fromto": [
-        "n7",
-        "n14"
-      ]
+      "fromto": ["n7", "n14"]
     },
     {
       "id": "e14",
-      "fromto": [
-        "n8",
-        "n15"
-      ]
+      "fromto": ["n8", "n15"]
     },
     {
       "id": "e15",
-      "fromto": [
-        "n16",
-        "n17"
-      ]
+      "fromto": ["n16", "n17"]
     },
     {
       "id": "e16",
-      "fromto": [
-        "n17",
-        "n18"
-      ]
+      "fromto": ["n17", "n18"]
     },
     {
       "id": "e17",
-      "fromto": [
-        "n16",
-        "n19"
-      ]
+      "fromto": ["n16", "n19"]
     },
     {
       "id": "e18",
-      "fromto": [
-        "n19",
-        "n20"
-      ],
+      "fromto": ["n19", "n20"],
       "note": ""
     },
     {
       "id": "e19",
-      "fromto": [
-        "n4",
-        "n21"
-      ]
+      "fromto": ["n4", "n21"]
     },
     {
       "id": "e20",
-      "fromto": [
-        "n21",
-        "n22"
-      ]
+      "fromto": ["n21", "n22"]
     },
     {
       "id": "e21",
-      "fromto": [
-        "n16",
-        "n23"
-      ]
+      "fromto": ["n16", "n23"]
     },
     {
       "id": "e22",
-      "fromto": [
-        "n23",
-        "n24"
-      ]
+      "fromto": ["n23", "n24"]
     },
     {
       "id": "e23",
-      "fromto": [
-        "n24",
-        "n25"
-      ]
+      "fromto": ["n24", "n25"]
     },
     {
       "id": "e24",
-      "fromto": [
-        "n16",
-        "n26"
-      ]
+      "fromto": ["n16", "n26"]
     },
     {
       "id": "e25",
-      "fromto": [
-        "n26",
-        "n27"
-      ]
+      "fromto": ["n26", "n27"]
     },
     {
       "id": "e26",
-      "fromto": [
-        "n27",
-        "n28"
-      ]
+      "fromto": ["n27", "n28"]
     },
     {
       "id": "e27",
-      "fromto": [
-        "n20",
-        "n29"
-      ],
+      "fromto": ["n20", "n29"],
       "note": "Edge note appears like this."
     },
     {
       "id": "e28",
-      "fromto": [
-        "n30",
-        "n20"
-      ],
+      "fromto": ["n30", "n20"],
       "note": "Depending on the direction of the edge, Note can be flipped."
     }
   ],
@@ -475,7 +391,7 @@
     },
     {
       "nodeid": "n25",
-      "image": "img/icon/tablet.svg",
+      "image": "../img/icon/tablet.svg",
       "text": "",
       "markdown": ""
     },
@@ -495,7 +411,7 @@
     {
       "nodeid": "n28",
       "text": "",
-      "markdown": "## This Is a Header\n### This Is a Subheader\n\n- bulleting1\n- bulleting2\n\n1. numbering 1\n2. numbering 2\n\ncode can be encapsulated in ```\n\n```\n<html>\n<div></div>\n</html>\n```\n\nPut image like this\n\n![](img/icon/cloud.svg)"
+      "markdown": "## This Is a Header\n### This Is a Subheader\n\n- bulleting1\n- bulleting2\n\n1. numbering 1\n2. numbering 2\n\ncode can be encapsulated in ```\n\n```\n<html>\n<div></div>\n</html>\n```\n\nPut image like this\n\n![](../img/icon/cloud.svg)"
     },
     {
       "nodeid": "n29",
